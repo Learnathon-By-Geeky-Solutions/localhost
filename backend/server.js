@@ -3,10 +3,11 @@ import cors from "cors"
 import "dotenv/config"; // this works directly instead of iporting dotenv, then dotenv.config()
 import cookieParser from "cookie-parser";
 import authRouter from "./routes/authRoutes.js";
-
+import connectDB from "./config/mongodb.js";
 
 
 const app = express();
+connectDB();
 
 
 app.use(express.json());
