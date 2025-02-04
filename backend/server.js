@@ -12,14 +12,12 @@ import authRoutes from "./routes/auth.routes.js";
 const app = express();
 dotenv.config();
 
-const PORT = process.env.PORT;
-// const __dirname = path.resolve();
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: `${process.env.BASE_URL}:${process.env.CLIENT_PORT}`,
     credentials: true,
   })
 );
@@ -28,7 +26,8 @@ app.use("/api/auth", authRoutes);
 
 
 
-app.listen(PORT, () => {
-  console.log("server is running on PORT:" + PORT);
+const port = process.env.SERVER_PORT;
+app.listen(port, () => {
+  console.log(`server is running on ${process.env.BASE_URL}:${port}`);
   connectDB();
 });
