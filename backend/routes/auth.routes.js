@@ -3,7 +3,7 @@
 
 
 import express from "express"
-import { login, logout, signup, updateProfile, checkAuth} from "../controllers/auth.controllers.js"; // auto imports
+import { login, logout, signup, getAuthUser} from "../controllers/auth.controllers.js"; // auto imports
 import { protectRoute } from "../middleware/auth.middleware.js";
 const router = express.Router()
 
@@ -20,11 +20,8 @@ router.post("/login", login);
 
 router.post("/logout", logout);
 
-router.put("/upadte-profile", protectRoute, updateProfile); 
-// this actually has a middleware function protectRoute that checks if user is logged in
-//before letting execution of the updateProfile funciton.. 
 
-router.get("/check", protectRoute, checkAuth);  
+router.get("/me", protectRoute, getAuthUser);  
 // if user is authenticated, keep them , else if error then move then to login page
 
 
