@@ -7,6 +7,7 @@ import cors from "cors";
 import connectDB  from "./config/mongodb.js";
 
 import authRoutes from "./routes/auth.routes.js";
+import courseRoutes from "./routes/course.routers.js";
 
 
 const app = express();
@@ -20,9 +21,10 @@ app.use(
     origin: `${process.env.BASE_URL}:${process.env.CLIENT_PORT}`,
     credentials: true,
   })
-);
+);  
 
 app.use("/api/auth", authRoutes);
+app.use("/api/courses", courseRoutes);
 
 
 
