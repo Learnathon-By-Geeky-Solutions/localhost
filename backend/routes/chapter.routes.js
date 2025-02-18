@@ -8,7 +8,13 @@ const router = express.Router();
 router.post("/", protectRoute, createChapter);
 
 // Get all chapters for a course (using '/course/:courseId' to avoid conflict with getChapterById)
-router.get("/course/:courseId", protectRoute, getChapters);
+// router.get("/course/:courseId", protectRoute, getChapters);
+
+
+/**
+ * @changed_the_path_to_maintain_consistancy 
+ */
+router.get("/", protectRoute, getChapters);
 
 // Get a single chapter by ID
 router.get("/:id", protectRoute, getChapterById);
