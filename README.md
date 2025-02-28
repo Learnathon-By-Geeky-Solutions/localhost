@@ -3,7 +3,7 @@
 ## Team Members
 - sadat2103108 (Team Leader)
 - samihashormi
-- Fariha-Anjum-Aupy
+- 0xAupy
 
 ## Mentor
 - moshiuzzaman
