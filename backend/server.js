@@ -10,6 +10,8 @@ import courseRoutes from "./routes/course.routes.js";
 import chapterRoutes from "./routes/chapter.routes.js";
 import reminderRoutes from "./routes/reminder.routes.js";
 
+import "./services/notification.service.js";
+
 const app = express();
 dotenv.config();
 

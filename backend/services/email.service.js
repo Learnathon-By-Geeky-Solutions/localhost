@@ -25,7 +25,7 @@ export const sendEmail = async (reminder) => {
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: user.email, // Dynamically fetch user's email
+      to: user.email,
       subject: "Task Reminder",
       text: `Don't forget to complete: ${reminder.taskTitle} before ${reminder.dueDate}`,
     };

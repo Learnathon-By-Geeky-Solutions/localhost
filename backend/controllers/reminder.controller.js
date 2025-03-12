@@ -28,9 +28,6 @@ export const createReminder = async (req, res) => {
 
     await newReminder.save();
 
-    // Send email immediately for testing
-    await sendEmail(newReminder);
-
     res.status(201).json({
       success: true,
       message: "Reminder created & email sent successfully",
