@@ -19,10 +19,19 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
+    origin: "http://127.0.0.1:5500", // to allow requests from the dummy-frontend
+    credentials: true,
+  })
+);
+
+/*
+app.use(
+  cors({
     origin: `${process.env.BASE_URL}:${process.env.CLIENT_PORT}`,
     credentials: true,
   })
 );
+*/
 
 app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);

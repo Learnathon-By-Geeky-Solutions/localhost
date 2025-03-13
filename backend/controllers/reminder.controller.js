@@ -1,6 +1,5 @@
 import Reminder from "../models/reminder.model.js";
 import User from "../models/user.model.js";
-import { sendEmail } from "../services/email.service.js";
 
 // Create a new reminder
 export const createReminder = async (req, res) => {
@@ -30,7 +29,7 @@ export const createReminder = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "Reminder created & email sent successfully",
+      message: "Reminder created successfully",
       reminder: newReminder,
     });
   } catch (error) {
@@ -96,5 +95,27 @@ export const deleteReminder = async (req, res) => {
       .json({ success: true, message: "Reminder deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: "Server error" });
+  }
+};
+
+// Subscribe user to push notifications
+export const subscribeUser = async (req, res) => {
+  try {
+    const { subscription } = req.body;
+    const userId = req.user.id; // Get the user ID from the authenticated user
+
+    // Find the user and save the subscription
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.subscription = subscription;
+    await user.save();
+
+    res.status(200).json({ message: "Subscription saved successfully" });
+  } catch (error) {
+    console.error("Error saving subscription:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };

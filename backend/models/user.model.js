@@ -10,37 +10,38 @@ import mongoose from "mongoose";
  */
 
 const userSchema = new mongoose.Schema(
-    {
-        email : {
-            type: String,
-            required: true,
-            unique: true,
-        },
-        fullName : {
-            type: String,
-            required: true,
-
-        },
-        password : {
-            type: String,
-            required : true,
-            minlength : 6,
-        }
+  {
+    email: {
+      type: String,
+      required: true,
+      unique: true,
     },
-    {
-        timestamps:true
-    }
+    fullName: {
+      type: String,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+      minlength: 6,
+    },
+    subscription: {
+      type: Object, // Stores the push subscription object
+      default: null,
+    },
+  },
+  {
+    timestamps: true,
+  }
 );
 /**
  * new Schema(definitionObject, optionsObject), taking two parameter
  * so Schema({define all field}, {timestamps:True});
  * this is the structrue
  * To clarify the role of the second parameter, think of it like this:
- * The first object defines the "what" (fields in the document), 
+ * The first object defines the "what" (fields in the document),
  * the second object modifies the "how" (schema behavior, like timestamps or versioning).
  */
-
-
 
 const User = mongoose.model("User", userSchema);
 //syntax, .model(name, schema)
