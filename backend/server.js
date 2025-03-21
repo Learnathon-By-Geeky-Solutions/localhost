@@ -8,6 +8,7 @@ import connectDB from "./config/mongodb.js";
 import authRoutes from "./routes/auth.routes.js";
 import courseRoutes from "./routes/course.routes.js";
 import chapterRoutes from "./routes/chapter.routes.js";
+import taskRoutes from "./routes/task.routes.js";
 import reminderRoutes from "./routes/reminder.routes.js";
 
 import "./services/notification.service.js";
@@ -37,7 +38,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/chapters", chapterRoutes);
 app.use("/api/reminders", reminderRoutes);
-
+app.use("/api/tasks",taskRoutes);
 const port = process.env.SERVER_PORT;
 app.listen(port, () => {
   console.log(`server is running on ${process.env.BASE_URL}:${port}`);
