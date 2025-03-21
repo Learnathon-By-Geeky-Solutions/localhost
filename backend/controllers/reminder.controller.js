@@ -1,26 +1,64 @@
 import Reminder from "../models/reminder.model.js";
+import Task from "../models/task.model.js";
 import User from "../models/user.model.js";
+
+// // Create a new reminder
+// export const createReminder = async (req, res) => {
+//   try {
+//     const { taskTitle, description, dueDate } = req.body;
+//     const userId = req.user.id;
+
+//     if (!taskTitle || !dueDate) {
+//       return res.status(400).json({ error: "All fields are required" });
+//     }
+
+//     // Fetch user email
+//     const user = await User.findById(userId);
+//     if (!user) {
+//       return res.status(404).json({ error: "User not found" });
+//     }
+
+//     // Create new reminder
+//     const newReminder = new Reminder({
+//       taskTitle,
+//       description,
+//       dueDate,
+//       userId,
+//     });
+
+//     await newReminder.save();
+
+//     res.status(201).json({
+//       success: true,
+//       message: "Reminder created successfully",
+//       reminder: newReminder,
+//     });
+//   } catch (error) {
+//     console.error("Error creating reminder:", error);
+//     res.status(500).json({ error: "Server error" });
+//   }
+// };
+
 
 // Create a new reminder
 export const createReminder = async (req, res) => {
   try {
-    const { taskTitle, description, dueDate } = req.body;
+    const { taskId, dueDate } = req.body;
     const userId = req.user.id;
 
-    if (!taskTitle || !dueDate) {
-      return res.status(400).json({ error: "All fields are required" });
+    if (!taskId || !dueDate) {
+      return res.status(400).json({ error: "Task ID and due date are required" });
     }
 
-    // Fetch user email
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
+    // Check if the task exists
+    const task = await Task.findById(taskId);
+    if (!task) {
+      return res.status(404).json({ error: "Task not found" });
     }
 
     // Create new reminder
     const newReminder = new Reminder({
-      taskTitle,
-      description,
+      taskId,
       dueDate,
       userId,
     });
@@ -37,6 +75,7 @@ export const createReminder = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
 
 // Get all reminders
 export const getReminders = async (req, res) => {
@@ -62,26 +101,64 @@ export const getReminderById = async (req, res) => {
   }
 };
 
+// // Update a reminder
+// export const updateReminder = async (req, res) => {
+//   try {
+//     const updatedReminder = await Reminder.findByIdAndUpdate(
+//       req.params.id,
+//       req.body,
+//       { new: true }
+//     );
+//     if (!updatedReminder) {
+//       return res.status(404).json({ error: "Reminder not found" });
+//     }
+//     res.status(200).json({
+//       success: true,
+//       message: "Reminder updated successfully",
+//       updatedReminder,
+//     });
+//   } catch (error) {
+//     res.status(500).json({ error: "Server error" });
+//   }
+// };
+
+
 // Update a reminder
 export const updateReminder = async (req, res) => {
   try {
-    const updatedReminder = await Reminder.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
-    if (!updatedReminder) {
+    const { taskId, dueDate } = req.body;
+
+    // Validate if the reminder exists
+    const existingReminder = await Reminder.findById(req.params.id);
+    if (!existingReminder) {
       return res.status(404).json({ error: "Reminder not found" });
     }
+
+    // If taskId is provided, check if the task exists
+    if (taskId) {
+      const task = await Task.findById(taskId);
+      if (!task) {
+        return res.status(404).json({ error: "Task not found" });
+      }
+    }
+
+    // Update the reminder
+    existingReminder.taskId = taskId || existingReminder.taskId;
+    existingReminder.dueDate = dueDate || existingReminder.dueDate;
+
+    await existingReminder.save();
+
     res.status(200).json({
       success: true,
       message: "Reminder updated successfully",
-      updatedReminder,
+      reminder: existingReminder,
     });
   } catch (error) {
+    console.error("Error updating reminder:", error);
     res.status(500).json({ error: "Server error" });
   }
 };
+
 
 // Delete a reminder
 export const deleteReminder = async (req, res) => {
