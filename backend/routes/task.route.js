@@ -8,7 +8,7 @@ import {
   getTasksByCourse, 
   getTasksByChapter 
 
-} from "../controllers/task.controllers.js";
+} from "../controllers/task.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js"; 
 
 const router = express.Router();
