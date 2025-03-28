@@ -1,0 +1,35 @@
+/* App.css */
+.app-bar {
+  transition: margin 0.3s ease-in-out, width 0.3s ease-in-out;
+}
+
+.app-bar.open {
+  width: calc(100% - 240px);
+  margin-left: 240px;
+}
+
+.menu-button {
+  margin-right: 16px;
+}
+
+.menu-button.hidden {
+  display: none;
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  justify-content: flex-end;
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 24px;
+  transition: margin 0.3s ease-in-out;
+  margin-left: -240px;
+}
+
+.main-content.open {
+  margin-left: 0;
+}
