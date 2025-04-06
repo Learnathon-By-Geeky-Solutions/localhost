@@ -1,26 +1,28 @@
 import React from 'react'
-import { BrowserRouter, Routes, Route} from 'react-router-dom';
-import Dashboard from "./pages/Dashboard"
-import StudyZone from './pages/StudyZone';
-
-import { Link } from 'react-router-dom';
+import styles from './app.module.css'
+import Navbar from './components/Navbar'
+import { Topbar } from './components/Topbar'
+import Stopwatch from './components/Stopwatch'
+import Test from './pages/Test'
 
 const App = () => {
   return (
-    <div>
+    <div className={styles.container}>
+
+      <Topbar />
+
+      <div className={styles.body}>
+        <Navbar />
+
+        <div className={styles.page}>
+          <h1>DASHBOARD</h1>
+          
+        </div>
 
 
-      <BrowserRouter>
-        <Link to='/'>Home</Link>
-        --
-        <Link to='/studyzone'>Studyzone</Link>
-        
-        <Routes>
-          <Route path="/" element={ <Dashboard/> } />
-          <Route path="/Studyzone" element={ <StudyZone/> } />
-        </Routes>
 
-      </BrowserRouter>
+      </div>
+
 
     </div>
   )
