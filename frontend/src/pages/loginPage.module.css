@@ -1,0 +1,194 @@
+.container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+}
+
+.leftSide {
+    background-color: white;
+    /* Soft Light Gray */
+    width: 50%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+img {
+    width: 100%;
+}
+
+.logo {
+    font-size: xx-large;
+    font-weight: bolder;
+    color: #6c5b7b;
+    /* Soft Purple */
+}
+
+.rightSide {
+    background-color: #ffffff;
+    /* Pure White */
+    height: 100%;
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+form {
+    background-color: #f7f7f7;
+    /* Very Light Gray */
+    height: 90%;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    /* Soft Shadow */
+}
+
+.formTitle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding-bottom: 40px;
+}
+
+h2 {
+    margin: 0px;
+    padding: 0px;
+    font-size: large;
+    font-weight: normal;
+    color: #4a4e69;
+    /* Soft Charcoal */
+}
+
+.inputField {
+    width: 90%;
+    height: 10%;
+    background-color: white;
+    margin: 10px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.icon {
+    margin: 5px;
+    height: 100%;
+    width: 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.field {
+    width: 85%;
+    display: flex;
+    flex-direction: column;
+}
+
+input {
+    margin: 5px;
+    border: none;
+    border-bottom: 2px solid #6c5b7b;
+    /* Soft Purple Accent */
+    margin-bottom: 2px;
+    font-size: medium;
+    outline: none;
+    background-color: white;
+}
+
+label {
+    padding: 0;
+    margin-left: 5px;
+    color: #4a4e69;
+    /* Soft Charcoal */
+}
+
+
+.errorZone {
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+}
+
+p {
+
+    color: #a3a8b5;
+    /* Light Gray Text */
+    padding: 5px;
+    margin: 0px;
+
+}
+
+
+p:hover {
+    cursor: pointer;
+    text-decoration: underline;
+    color: #6c5b7b;
+    /* Soft Purple Accent */
+}
+
+.error {
+    padding: 5px;
+    color: red;
+}
+
+button {
+    border: none;
+    width: 90%;
+    height: 10%;
+    background-color: #ffb6b9;
+    /* Soft Peach */
+    margin: 5%;
+    border-radius: 10px;
+    font-size: xx-large;
+    font-weight: bolder;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+button:hover {
+    border: 2px solid #6c5b7b;
+    /* Soft Purple Accent */
+    cursor: pointer;
+}
+
+
+/* ############# */
+
+@keyframes shake {
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    50% {
+        transform: translateX(5px);
+    }
+
+    75% {
+        transform: translateX(-5px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+/* Add the shake class to the element */
+.shake {
+    animation: shake 0.5s ease forwards;
+}
