@@ -16,10 +16,10 @@ const ProtectedLayout = ({ children }) => {
     <div className={styles.container}>
       <Topbar />
       <div className={styles.body}>
-        <Navbar />
         <div className={styles.page}>
           {children}
         </div>
+        <Navbar />
       </div>
     </div>
   );

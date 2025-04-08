@@ -4,15 +4,17 @@ import { axiosInstance } from "../lib/axios.js";
 export const useAuthStore = create((set) => ({
   user: null,
   authError: null,
-  isLoggingIn: false, // Added for logging state tracking
+  isLoggingIn: false, 
+  isCheckingAuth: false,
 
   checkAuth: async () => {
-    set({ user: null });
+    set({ user: null,  isCheckingAuth:true});
+    
 
     try {
       // Replaced fetch with axios
       const response = await axiosInstance.get("/auth/me", {
-        withCredentials: true, // Include cookies if needed
+        withCredentials: true, 
       });
 
       if (response.data) {
@@ -25,6 +27,8 @@ export const useAuthStore = create((set) => ({
       set({ user: null, authError: "Error checking auth: " + error.message });
 
       console.error("Error checking auth:", error);
+    } finally {
+      set({ isCheckingAuth: false }); 
     }
   },
 

@@ -1,7 +1,8 @@
 
 .container{
     width: 7%;
-    background-color:lightskyblue;
+    /* background-color: lightslategray; */
+    background-color: lightslategray;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -29,5 +30,5 @@
 }
 
 .menuItem:hover{
-    background-color: lightslategray;
+    background-color: #ffb6b9;
 }
