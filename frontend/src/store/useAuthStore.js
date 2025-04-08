@@ -1,63 +1,73 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 import { axiosInstance } from "../lib/axios.js";
 
-export const useAuthStore = create((set, get) => ({
-  authUser: null,
-  isSigningUp: false,
-  isLoggingIn: true,
-  isUpdatingProfile: false,
-  isCheckingAuth: true,
-  onlineUsers: [],
-
+export const useAuthStore = create((set) => ({
+  user: null,
+  authError: null,
+  isLoggingIn: false, // Added for logging state tracking
 
   checkAuth: async () => {
-    try {
-      const res = await axiosInstance.get("/auth/check");
-      set({ authUser: res.data });
+    set({ user: null });
 
+    try {
+      // Replaced fetch with axios
+      const response = await axiosInstance.get("/auth/me", {
+        withCredentials: true, // Include cookies if needed
+      });
+
+      if (response.data) {
+        set({ user: response.data });
+        console.log("Authenticated:", response.data);
+      } else {
+        set({ user: null });
+      }
     } catch (error) {
-      console.log("Error in checkAuth:", error);
-      set({ authUser: null });
-    } finally {
-      set({ isCheckingAuth: false });
+      set({ user: null, authError: "Error checking auth: " + error.message });
+
+      console.error("Error checking auth:", error);
     }
   },
 
-  signup: async (data) => {
-    set({ isSigningUp: true });
+  login: async (credentials) => {
+    set({ isLoggingIn: true }); 
+  
     try {
-      const res = await axiosInstance.post("/auth/signup", data);
-      set({ authUser: res.data });
-
+      
+      const response = await axiosInstance.post("/auth/login", credentials);
+      
+      
+      set({ user: response.data });
+      set({ authError: null }); 
     } catch (error) {
-      console.log("Signup error:", error.response?.data?.message || error.message);
+      // Handle login failure: set user to null and store error message
+      set({ user: null });
+      set({ authError: error.response?.data?.message || error.message });
+  
+      console.log("Login error:", error.response?.data?.message || error.message); // Log the error for debugging
     } finally {
-      set({ isSigningUp: false });
-    }
-  },
-
-  login: async (data) => {
-
-    try {
-      const res = await axiosInstance.post("/auth/login", data);
-      set({ authUser: res.data });
-
-    } catch (error) {
-      console.log("Login error:", error.response?.data?.message || error.message);
-    } finally {
-      set({ isLoggingIn: false });
+      set({ isLoggingIn: false }); // End logging in process, regardless of success or failure
     }
   },
 
   logout: async () => {
+    const url = import.meta.env.VITE_API_URL + "/auth/logout";
     try {
-      await axiosInstance.post("/auth/logout");
-      set({ authUser: null });
 
+      const response = await axiosInstance.post(url, {}, {
+        withCredentials: true,
+      });
+
+      if (response.status !== 200) {
+        throw new Error('Logout failed');
+      }
+
+      set({ user: null, authError: null });
+      console.log("Logout successful");
+    
     } catch (error) {
-      console.log("Logout error:", error.response?.data?.message || error.message);
+      set({ authError: "Error logging out: " + error.message });
+      console.error("Error logging out:", error);
     }
+    
   },
-
-
 }));

@@ -1,73 +1,45 @@
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import styles from './LoginPage.module.css'
 import { useAuthStore } from '../store/useAuthStore';
+import { Navigate } from 'react-router-dom';
 
 const LoginPage = () => {
     const [seePass, setSeePass] = useState(false);
     const [email, setEmail] = useState('');
     const [pass, setPass] = useState('');
     const [showError, setShowError] = useState(false);
-    const { login,authUser} = useAuthStore();
+
+    const { user, authError, login } = useAuthStore();
+
+
 
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        
-        if(!email || !pass){
+
+        if (!email || !pass) {
             // setShowError(false);
             setShowError(true);
             setTimeout(() => {
                 setShowError(false);
             }, 500);
-            
+
             return;
         }
-        
-        await login({email:email, password:pass});
 
+        await login({ email, password: pass });
 
-        if(authUser){
-            console.log("yesss");
-            console.log(authUser);
-        }
-        else{
-            // setShowError(false);
-            console.log("Nooo");
+        if (user) {
+            console.log("Login successful:", data);
+            setShowError(false);
+            return <Navigate to="/dashboard" />;
+        } else {
             setShowError(true);
             setEmail('');
-            setPass('');    
-            
+            setPass('');
+            console.error("Login failed:", authError);
         }
-        
-        
-        return;
 
-        const url = import.meta.env.VITE_API_URL + "/auth/login";
-        try {
-            const response = await fetch(url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email: email, password: pass }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                console.log("Login successful:", data);
-                setShowError(false);
-                alert("yeeeeee");
-                // Store token, redirect, etc.
-            } else {
-                setShowError(true);
-                setEmail('');
-                setPass('');
-                console.error("Login failed:", data.message || "Unknown error");
-            }
-        } catch (error) {
-            console.error("Error logging in:", error);
-        }
     };
     const toggleSeePass = (e) => {
         setSeePass(!seePass);
@@ -90,8 +62,8 @@ const LoginPage = () => {
                     </div>
 
                     {/* <div className={styles.inputField}> */}
-                    <div className={showError?`${styles.inputField} ${styles.shake}`: styles.inputField }>
-                    
+                    <div className={showError ? `${styles.inputField} ${styles.shake}` : styles.inputField}>
+
                         <div className={styles.icon}>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" stroke="white" strokeWidth="1.5" >
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
@@ -106,7 +78,7 @@ const LoginPage = () => {
 
 
                     </div>
-                    <div className={showError?`${styles.inputField} ${styles.shake}`: styles.inputField }>
+                    <div className={showError ? `${styles.inputField} ${styles.shake}` : styles.inputField}>
                         <div className={styles.icon}>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" stroke='white' strokeWidth="1">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z" />

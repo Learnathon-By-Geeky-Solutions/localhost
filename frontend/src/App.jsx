@@ -1,29 +1,39 @@
-import React, { useState,useEffect } from 'react'
-import styles from './app.module.css'
-import Navbar from './components/Navbar'
-import { Topbar } from './components/Topbar'
-import Stopwatch from './components/Stopwatch'
-import Test from './pages/Test'
-import LoginPage from './pages/LoginPage'
-import { useAuthStore } from './store/useAuthStore'
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
+import Dashboard from './pages/Dashboard';
+import { useAuthStore } from './store/useAuthStore';
+
+import styles from './app.module.css';
+
 const App = () => {
-  const [isAuth, setIsAuth] = useState(false);
-  const { authUser, checkAuth } = useAuthStore();
+  const { user, checkAuth } = useAuthStore();
 
   useEffect(() => {
-    checkAuth();
+    checkAuth(); 
   }, [checkAuth]);
 
   return (
+    
+      <Router>
+        <Routes>
+          <Route 
+            path="/"
+            element={<Navigate to="/dashboard" /> }
+          />
+          <Route
+            path="/login"
+            element={user ? <Navigate to="/dashboard" /> : <LoginPage />}
+          />
+          <Route
+            path="/dashboard"
+            element={user ? <Dashboard /> : <Navigate to="/login" />}
+          />
+          {/* Add other routes here */}
+        </Routes>
+      </Router>
+    
+  );
+};
 
-      <div className={styles.container}>
-        {
-          authUser? <h1>logged in yeee</h1>:<LoginPage/>
-        }
-      </div>
- 
-
-  )
-}
-
-export default App
+export default App;
