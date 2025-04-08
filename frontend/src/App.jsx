@@ -3,36 +3,52 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
 import { useAuthStore } from './store/useAuthStore';
-
-import styles from './app.module.css';
+import ProtectedLayout from './components/ProtectedLayout';
+import RecoverPage from './pages/RecoverPage';
+import SignupPage from './pages/SignupPage';
 
 const App = () => {
   const { user, checkAuth } = useAuthStore();
 
   useEffect(() => {
-    checkAuth(); 
+    checkAuth();
   }, [checkAuth]);
 
   return (
-    
-      <Router>
-        <Routes>
-          <Route 
-            path="/"
-            element={<Navigate to="/dashboard" /> }
-          />
-          <Route
-            path="/login"
-            element={user ? <Navigate to="/dashboard" /> : <LoginPage />}
-          />
-          <Route
-            path="/dashboard"
-            element={user ? <Dashboard /> : <Navigate to="/login" />}
-          />
-          {/* Add other routes here */}
-        </Routes>
-      </Router>
-    
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={<Navigate to={user ? "/dashboard" : "/login"} />}
+        />
+
+        <Route
+          path="/login"
+          element={user ? <Navigate to="/dashboard" /> : <LoginPage />}
+        />
+
+        <Route
+          path="/signup"
+          element={user ? <Navigate to="/dashboard" /> : <SignupPage />}
+        />
+        <Route
+          path="/recover"
+          element={user ? <Navigate to="/dashboard" /> : <RecoverPage/>}
+        />
+
+        <Route
+          path="/dashboard"
+          element={
+            user ?
+              <ProtectedLayout>
+                <Dashboard />
+              </ProtectedLayout>
+              :
+              <Navigate to="/" />
+          }
+        />
+      </Routes>
+    </Router>
   );
 };
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import styles from './LoginPage.module.css'
 import { useAuthStore } from '../store/useAuthStore';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
     const [seePass, setSeePass] = useState(false);
@@ -10,7 +10,8 @@ const LoginPage = () => {
     const [showError, setShowError] = useState(false);
 
     const { user, authError, login } = useAuthStore();
-
+    const useNav = useNavigate();
+    
 
 
 
@@ -107,14 +108,9 @@ const LoginPage = () => {
 
                         </div>
                     </div>
-                    {/* <div className={styles.errorZone}>
-                        <p>Forget password?</p>
-                        {showError && <div className={styles.error}>Invalid Credentials</div> }
-                        
-
-                    </div> */}
+                    
                     <div className={styles.errorZone}>
-                        <p>Forget password?</p>
+                        <p onClick={()=>useNav('/recover')}>Forget password?</p>
                         {showError && (
                             <div className={styles.error}>
                                 Invalid Credentials
@@ -124,7 +120,7 @@ const LoginPage = () => {
 
                     <button type='submit'>Login</button>
 
-                    <p>Don't have an account? Sign Up</p>
+                    <p onClick={()=>useNav('/signup')}>Don't have an account? Sign Up</p>
                 </form>
 
             </div>
