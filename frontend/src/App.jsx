@@ -6,7 +6,7 @@ import { useAuthStore } from './store/useAuthStore';
 import ProtectedLayout from './components/ProtectedLayout';
 import RecoverPage from './pages/RecoverPage';
 import SignupPage from './pages/SignupPage';
-import LoadingPage from './pages/LoadingPage';
+import BufferPage from './pages/BufferPage';
 
 const App = () => {
   const { isCheckingAuth, user, checkAuth, } = useAuthStore();
@@ -15,7 +15,7 @@ const App = () => {
     checkAuth();
   }, [checkAuth]);
 
-  if(isCheckingAuth) return <LoadingPage/>
+  if(isCheckingAuth) return <BufferPage/>
 
   return (
     <Router>
