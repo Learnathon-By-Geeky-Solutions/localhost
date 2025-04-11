@@ -6,7 +6,7 @@ import './global.css'
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <>
-      <h3>TEST MODE</h3>
+      {/* <h3>TEST MODE</h3> */}
       <App />
     </>
   </React.StrictMode>
