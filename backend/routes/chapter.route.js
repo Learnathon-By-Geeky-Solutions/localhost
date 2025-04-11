@@ -1,5 +1,11 @@
 import express from "express";
-import { createChapter, getChapters, getChapterById, updateChapter, deleteChapter } from "../controllers/chapter.controllers.js";
+import {
+  createChapter,
+  getChapters,
+  getChapterById,
+  updateChapter,
+  deleteChapter,
+} from "../controllers/chapter.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
@@ -10,9 +16,8 @@ router.post("/", protectRoute, createChapter);
 // Get all chapters for a course (using '/course/:courseId' to avoid conflict with getChapterById)
 // router.get("/course/:courseId", protectRoute, getChapters);
 
-
 /**
- * @changed_the_path_to_maintain_consistancy 
+ * @changed_the_path_to_maintain_consistancy
  */
 router.get("/", protectRoute, getChapters);
 
