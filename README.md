@@ -26,3 +26,10 @@ STUDIFY is a web-based academic assistant platform designed to boost student pro
 - [Project Documentation](docs/)
 - [Development Setup](docs/setup.md)
 - [Contributing Guidelines](CONTRIBUTING.md)
+
+
+## TO DO 
+git add .
+git commit -m"write message here"
+git pull origin dev
+git push origin dev
