@@ -141,7 +141,7 @@ p:hover {
     color: red;
 }
 
-button {
+.btn {
     border: none;
     width: 90%;
     height: 10%;
@@ -157,7 +157,7 @@ button {
     color: white;
 }
 
-button:hover {
+.btn:hover {
     border: 2px solid #6c5b7b;
     /* Soft Purple Accent */
     cursor: pointer;

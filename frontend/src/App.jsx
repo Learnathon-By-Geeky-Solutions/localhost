@@ -7,6 +7,9 @@ import ProtectedLayout from './components/ProtectedLayout';
 import RecoverPage from './pages/RecoverPage';
 import SignupPage from './pages/SignupPage';
 import BufferPage from './pages/BufferPage';
+import Courses from './pages/Courses';
+import Planner from './pages/Planner';
+import Settings from './pages/Settings';
 
 const App = () => {
   const { isCheckingAuth, user, checkAuth, } = useAuthStore();
@@ -15,7 +18,7 @@ const App = () => {
     checkAuth();
   }, [checkAuth]);
 
-  if(isCheckingAuth) return <BufferPage/>
+  if (isCheckingAuth) return <BufferPage />
 
   return (
     <Router>
@@ -36,7 +39,7 @@ const App = () => {
         />
         <Route
           path="/recover"
-          element={user ? <Navigate to="/dashboard" /> : <RecoverPage/>}
+          element={user ? <Navigate to="/dashboard" /> : <RecoverPage />}
         />
 
         <Route
@@ -50,6 +53,45 @@ const App = () => {
               <Navigate to="/" />
           }
         />
+
+        <Route
+          path="/courses"
+          element={
+            user ?
+              <ProtectedLayout>
+                <Courses />
+              </ProtectedLayout>
+              :
+              <Navigate to="/" />
+          }
+        />
+
+        <Route
+          path="/planner"
+          element={
+            user ?
+              <ProtectedLayout>
+                <Planner />
+              </ProtectedLayout>
+              :
+              <Navigate to="/" />
+          }
+        />
+
+        <Route
+          path="/settings"
+          element={
+            user ?
+              <ProtectedLayout>
+                <Settings/>
+              </ProtectedLayout>
+              :
+              <Navigate to="/" />
+          }
+        />
+
+
+
       </Routes>
     </Router>
   );

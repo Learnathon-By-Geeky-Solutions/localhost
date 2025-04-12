@@ -118,7 +118,7 @@ const LoginPage = () => {
                         )}
                     </div>
 
-                    <button type='submit'>Login</button>
+                    <button className={styles.btn} type='submit'>Login</button>
 
                     <p onClick={()=>useNav('/signup')}>Don't have an account? Sign Up</p>
                 </form>

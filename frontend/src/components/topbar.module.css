@@ -23,18 +23,20 @@
 }
 
 .rightSide{
+    
     height: 100%;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-between;
     align-items: center;
     margin-right: 30px;
 }
 
 .profile{
-    background-color: burlywood;
+    margin:10px;
+    background-color: lightslategray;
     border-radius: 50%;
-    width: 45px;
-    height:45px;
+    width: 30px;
+    height:30px;
 
     display: flex;
     justify-content: center;
@@ -43,9 +45,10 @@
 }
 
 .name{
+    margin:10px;
     font-weight: bold;
     font-size:large;
-    padding: 5px;
+    /* padding: 5px; */
 
     display: flex;
     justify-content: center;
@@ -54,9 +57,10 @@
 }
 
 .notification{
-    margin: 20px;
-    background-color: aliceblue;
-    border-radius: 10%;
+    margin:10px;
+    /* margin: 20px; */
+    background-color: lightslategray;
+    border-radius: 50%;
     width: 30px;
     height: 30px;
     display: flex;
