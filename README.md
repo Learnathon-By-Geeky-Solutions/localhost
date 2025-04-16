@@ -28,8 +28,11 @@ STUDIFY is a web-based academic assistant platform designed to boost student pro
 - [Contributing Guidelines](CONTRIBUTING.md)
 
 
-## TO DO 
+## When code is working:
 git add .
 git commit -m"write message here"
 git pull origin dev
 git push origin dev
+
+## when you want to get other's code:
+git pull origin dev
