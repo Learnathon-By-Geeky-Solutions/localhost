@@ -38,7 +38,7 @@ const Navbar = () => {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <button className={styles.menuItem}>
+      <button className={styles.menuItem} onClick={() => useNav("/entry")}>
         <div className={styles.icon}>
           <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -33,7 +33,7 @@
   padding: 0;
   max-height: 380px;
   /* Custom scrollbar styles */
-  scrollbar-width: thin;
+  scrollbar-width: auto;
   scrollbar-color: #718096 #2d3748;
 }
 
