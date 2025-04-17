@@ -19,7 +19,7 @@ router.post("/", protectRoute, createChapter);
 /**
  * @changed_the_path_to_maintain_consistancy
  */
-router.post("/", protectRoute, getChapters);
+router.get("/all/:courseId", protectRoute, getChapters);
 
 // Get a single chapter by ID
 router.get("/:id", protectRoute, getChapterById);

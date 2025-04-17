@@ -22,30 +22,9 @@ export const createChapter = async (req, res) => {
 };
 
 //Get all chapters for a course
-// export const getChapters = async (req, res) => {
-//     try {
-//         const { courseId } = req.params;
-
-//         // Fetch chapters by courseId
-//         const chapters = await Chapter.find({ courseId });
-//         res.status(200).json(chapters);
-//     } catch (error) {
-//         res.status(500).json({ message: "Server error", error });
-//     }
-// };
-
-/** 
- * @newly_added_by_sadat
- * course ID is taken from body instead of parameter
- * to maintain consistancy
-*/
 export const getChapters = async (req, res) => {
     try {
-        const { courseId } = req.body;
-
-        if (!courseId) {
-            return res.status(400).json({ message: "Course ID is required" });
-        }
+        const { courseId } = req.params;
 
         // Fetch chapters by courseId
         const chapters = await Chapter.find({ courseId });

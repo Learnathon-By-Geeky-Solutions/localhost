@@ -24,7 +24,7 @@ const Chapters = () => {
       }
 
       try {
-        const response = await axiosInstance.post("/chapters", {
+        const response = await axiosInstance.get(`/chapters/all/${id}`, {
           courseId: id, // sent in request body
         });
         setChapters(response.data);
