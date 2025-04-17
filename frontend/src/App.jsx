@@ -18,6 +18,7 @@ import Settings from "./pages/Settings";
 import Studyzone from "./pages/StudyzonePage";
 import Entry from "./pages/Entry";
 import Chapters from "./pages/Chapters";
+import RouteTracker from "./components/RouteTracker";
 
 const App = () => {
   const { isCheckingAuth, user, checkAuth } = useAuthStore();
@@ -25,15 +26,22 @@ const App = () => {
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+  useEffect(() => {
+    localStorage.setItem(`hasSeenWelcome`, false);
+
+  }, [])
 
   if (isCheckingAuth) return <BufferPage />;
 
+
+
   return (
     <Router>
+      <RouteTracker />
       <Routes>
         <Route
           path="/"
-          element={<Navigate to={user ? "/dashboard" : "/login"} />}
+          element={<Navigate to={user ? localStorage.getItem("lastPath") || "/dashboard" : "/login"} />}
         />
 
         <Route
