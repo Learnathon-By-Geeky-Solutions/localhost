@@ -22,7 +22,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: "http://127.0.0.1:5500", // to allow requests from the dummy-frontend
+    origin: `${process.env.BASE_URL}:${process.env.CLIENT_PORT}`, // to allow requests from the dummy-frontend
     credentials: true,
   })
 );

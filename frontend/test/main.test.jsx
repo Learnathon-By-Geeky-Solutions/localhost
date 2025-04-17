@@ -1,10 +1,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App'
+import App from './App.test'
 import './global.css' 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App />
+    <>
+      {/* <h3>TEST MODE</h3> */}
+      <App />
+    </>
   </React.StrictMode>
 )
