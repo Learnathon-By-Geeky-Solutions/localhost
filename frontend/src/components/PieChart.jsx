@@ -17,7 +17,7 @@ const PieChart = () => {
       {
         label: "Tasks",
         data: [10, 7, 3],
-        backgroundColor: ["#FFAFCC", "#B9FBC0", "#f44336"],
+        backgroundColor: ["#F7CFD8", "#F4F8D3", "#A6D6D6"],
         borderWidth: 1,
       },
     ],
