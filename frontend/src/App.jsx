@@ -17,6 +17,7 @@ import Planner from "./pages/Planner";
 import Settings from "./pages/Settings";
 import Studyzone from "./pages/StudyzonePage";
 import Entry from "./pages/Entry";
+import Chapters from "./pages/Chapters";
 
 const App = () => {
   const { isCheckingAuth, user, checkAuth } = useAuthStore();
@@ -54,7 +55,7 @@ const App = () => {
           element={
             user ? (
               <ProtectedLayout>
-                <Entry/>
+                <Entry />
               </ProtectedLayout>
             ) : (
               <Navigate to="/" />
@@ -113,6 +114,32 @@ const App = () => {
             )
           }
         />
+
+        <Route
+          path="/courses/:id"
+          element={
+            user ? (
+              <ProtectedLayout>
+                <Chapters />
+              </ProtectedLayout>
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+
+        {/* <Route
+          path="/chapter/:id"
+          element={
+            user ? (
+              <ProtectedLayout>
+                <ChapterDetails />
+              </ProtectedLayout>
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        /> */}
 
         <Route
           path="/settings"

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { axiosInstance } from '../lib/axios';
+import { axiosInstance } from '../lib/axios'; // make sure the path is correct
 import { useAuthStore } from '../store/useAuthStore';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import styles from './courses.module.css'; 
 import BufferPage from './BufferPage';
 
@@ -32,7 +32,7 @@ const Courses = () => {
     };
 
     initialize();
-  }, [user, checkAuth, navigate]); // Added dependencies for better optimization
+  }, [user, checkAuth, navigate]);
 
   if (loading) return <BufferPage />;
 
@@ -40,12 +40,17 @@ const Courses = () => {
     <div className={styles.container}>
       {courses.length > 0 ? (
         courses.map(course => (
-          <div key={course._id} className={styles.courseCard}>
+          <Link 
+            to={`/courses/${course._id}`} 
+            key={course._id} 
+            className={styles.courseCard}
+            style={{ textDecoration: 'none', color: 'inherit' }}
+          >
             <div>
               <h3>{course.title}</h3>
               <p>{course.description}</p>
             </div>
-          </div>
+          </Link>
         ))
       ) : (
         <p>No courses found.</p>
@@ -55,113 +60,3 @@ const Courses = () => {
 };
 
 export default Courses;
-
-
-// import React from 'react'
-// import styles from './courses.module.css'
-
-
-// const Courses = () => {
-//   return (
-//     <div className={styles.container}>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//       <div className={styles.courseCard}>
-//         <h3>Course 1</h3>
-//       </div>
-//     </div>
-//   )
-// }
-
-// export default Courses
