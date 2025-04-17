@@ -5,7 +5,7 @@ import { useAuthStore } from '../store/useAuthStore';
 import { Topbar } from './Topbar';
 import Navbar from './Navbar';
 
-import styles from '../app.module.css';
+import styles from './protectedLayout.module.css';
 
 const ProtectedLayout = ({ children }) => {
   const { user } = useAuthStore();
@@ -15,7 +15,7 @@ const ProtectedLayout = ({ children }) => {
   return (
     <div className={styles.container}>
       <Topbar />
-      <div className={styles.body}>
+      <div className={styles.content}>
         <div className={styles.page}>
           {children}
         </div>
