@@ -24,7 +24,7 @@ export const createChapter = async (req, res) => {
 
         res.status(201).json(newChapter);
     } catch (error) {
-        res.status(500).json({ message: "Server error", error });
+        res.status(500).json({ message: "Server error", error: error.message });
     }
 };
 
@@ -40,7 +40,7 @@ export const getChapters = async (req, res) => {
         const chapters = await Chapter.find({ courseId });
         res.status(200).json(chapters);
     } catch (error) {
-        res.status(500).json({ message: "Server error", error });
+        res.status(500).json({ message: "Server error", error: error.message });
     }
 };
 
@@ -60,11 +60,11 @@ export const getChapterById = async (req, res) => {
 
         res.status(200).json(chapter);
     } catch (error) {
-        res.status(500).json({ message: "Server error", error });
+        res.status(500).json({ message: "Server error", error: error.message });
     }
 };
 
-// Update a chapter
+// Update a chapter safely
 export const updateChapter = async (req, res) => {
     try {
         const { id } = req.params;
@@ -73,10 +73,17 @@ export const updateChapter = async (req, res) => {
             return res.status(400).json({ message: "Invalid chapter ID" });
         }
 
-        const { title, content } = req.body; // extract fields to avoid blindly passing req.body
-        const updatedChapter = await Chapter.findByIdAndUpdate(
-            id,
-            { title, content },
+        const updates = {};
+        if (typeof req.body.title === "string") updates.title = req.body.title;
+        if (typeof req.body.content === "string") updates.content = req.body.content;
+
+        if (Object.keys(updates).length === 0) {
+            return res.status(400).json({ message: "No valid fields to update" });
+        }
+
+        const updatedChapter = await Chapter.findOneAndUpdate(
+            { _id: mongoose.Types.ObjectId(id) },
+            updates,
             { new: true, runValidators: true }
         );
 
@@ -86,7 +93,7 @@ export const updateChapter = async (req, res) => {
 
         res.status(200).json(updatedChapter);
     } catch (error) {
-        res.status(500).json({ message: "Server error", error });
+        res.status(500).json({ message: "Server error", error: error.message });
     }
 };
 
@@ -106,6 +113,6 @@ export const deleteChapter = async (req, res) => {
 
         res.status(200).json({ message: "Chapter deleted successfully" });
     } catch (error) {
-        res.status(500).json({ message: "Server error", error });
+        res.status(500).json({ message: "Server error", error: error.message });
     }
 };
