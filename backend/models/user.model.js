@@ -25,10 +25,6 @@ const userSchema = new mongoose.Schema(
       required: true,
       minlength: 6,
     },
-    subscription: {
-      type: Object, // Stores the push subscription object
-      default: null,
-    },
   },
   {
     timestamps: true,

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./notificationPanel.module.css";
 
-const NotificationPanel = () => {
+const NotificationPanel = ({ onCountUpdate }) => {
   const [reminders, setReminders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -36,6 +36,11 @@ const NotificationPanel = () => {
           );
 
         setReminders(filteredReminders);
+
+        // Update the count in the parent component
+        if (onCountUpdate) {
+          onCountUpdate(filteredReminders.length);
+        }
       } catch (err) {
         console.error("Error fetching reminders:", err);
       } finally {
@@ -46,7 +51,7 @@ const NotificationPanel = () => {
     fetchData();
     const intervalId = setInterval(fetchData, 60000); // Refresh every 1 minute
     return () => clearInterval(intervalId);
-  }, []);
+  }, [onCountUpdate]);
 
   const formatDueDate = (dateString) => {
     const date = new Date(dateString);
