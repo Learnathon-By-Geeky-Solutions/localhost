@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Reminder from "../models/reminder.model.js";
 import Task from "../models/task.model.js";
 import User from "../models/user.model.js";
@@ -12,13 +13,15 @@ export const createReminder = async (req, res) => {
       return res.status(400).json({ error: "Task ID is required" });
     }
 
-    // Check if the task exists
+    if (!mongoose.Types.ObjectId.isValid(taskId)) {
+      return res.status(400).json({ error: "Invalid Task ID" });
+    }
+
     const task = await Task.findById(taskId);
     if (!task) {
       return res.status(404).json({ error: "Task not found" });
     }
 
-    // Create reminder with dueDate from the task
     const newReminder = new Reminder({
       taskId,
       dueDate: task.dueDate,
@@ -44,7 +47,7 @@ export const getReminders = async (req, res) => {
     const userId = req.user.id;
     const reminders = await Reminder.find({ userId }).populate({
       path: "taskId",
-      select: "title description dueDate", // only what you need
+      select: "title description dueDate",
     });
     res.status(200).json(reminders);
   } catch (error) {
@@ -55,10 +58,17 @@ export const getReminders = async (req, res) => {
 // Get a specific reminder by ID
 export const getReminderById = async (req, res) => {
   try {
-    const reminder = await Reminder.findById(req.params.id);
+    const reminderId = req.params.id;
+
+    if (!mongoose.Types.ObjectId.isValid(reminderId)) {
+      return res.status(400).json({ error: "Invalid Reminder ID" });
+    }
+
+    const reminder = await Reminder.findById(reminderId);
     if (!reminder) {
       return res.status(404).json({ error: "Reminder not found" });
     }
+
     res.status(200).json(reminder);
   } catch (error) {
     res.status(500).json({ error: "Server error" });
@@ -68,25 +78,34 @@ export const getReminderById = async (req, res) => {
 // Update a reminder
 export const updateReminder = async (req, res) => {
   try {
+    const reminderId = req.params.id;
     const { taskId, dueDate } = req.body;
 
-    // Validate if the reminder exists
-    const existingReminder = await Reminder.findById(req.params.id);
+    if (!mongoose.Types.ObjectId.isValid(reminderId)) {
+      return res.status(400).json({ error: "Invalid Reminder ID" });
+    }
+
+    const existingReminder = await Reminder.findById(reminderId);
     if (!existingReminder) {
       return res.status(404).json({ error: "Reminder not found" });
     }
 
-    // If taskId is provided, check if the task exists
     if (taskId) {
+      if (!mongoose.Types.ObjectId.isValid(taskId)) {
+        return res.status(400).json({ error: "Invalid Task ID" });
+      }
+
       const task = await Task.findById(taskId);
       if (!task) {
         return res.status(404).json({ error: "Task not found" });
       }
+
+      existingReminder.taskId = taskId;
     }
 
-    // Update the reminder
-    existingReminder.taskId = taskId || existingReminder.taskId;
-    existingReminder.dueDate = dueDate || existingReminder.dueDate;
+    if (dueDate) {
+      existingReminder.dueDate = dueDate;
+    }
 
     await existingReminder.save();
 
@@ -104,10 +123,17 @@ export const updateReminder = async (req, res) => {
 // Delete a reminder
 export const deleteReminder = async (req, res) => {
   try {
-    const deletedReminder = await Reminder.findByIdAndDelete(req.params.id);
+    const reminderId = req.params.id;
+
+    if (!mongoose.Types.ObjectId.isValid(reminderId)) {
+      return res.status(400).json({ error: "Invalid Reminder ID" });
+    }
+
+    const deletedReminder = await Reminder.findByIdAndDelete(reminderId);
     if (!deletedReminder) {
       return res.status(404).json({ error: "Reminder not found" });
     }
+
     res
       .status(200)
       .json({ success: true, message: "Reminder deleted successfully" });
@@ -120,9 +146,12 @@ export const deleteReminder = async (req, res) => {
 export const subscribeUser = async (req, res) => {
   try {
     const { subscription } = req.body;
-    const userId = req.user.id; // Get the user ID from the authenticated user
+    const userId = req.user.id;
 
-    // Find the user and save the subscription
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid User ID" });
+    }
+
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
