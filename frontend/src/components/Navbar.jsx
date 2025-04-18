@@ -7,7 +7,7 @@ const Navbar = () => {
   const { logout } = useAuthStore();
   const [isHovered, setIsHovered] = useState(false);
   const hoverTimeoutRef = useRef(null);
-  const useNav = useNavigate();
+  const navigate = useNavigate();
 
 
   const handleMouseEnter = () => {
@@ -29,7 +29,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     await logout();
     // return <Navigate to="/" />;
-    useNav('/');
+    navigate('/');
   };
 
   return (
@@ -38,7 +38,7 @@ const Navbar = () => {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <button className={styles.menuItem} onClick={() => useNav("/entry")}>
+      <button className={styles.menuItem} onClick={() => navigate("/entry")}>
         <div className={styles.icon}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -54,7 +54,7 @@ const Navbar = () => {
         {isHovered && <div className={styles.menuName}>Entry</div>}
       </button>
 
-      <button className={styles.menuItem} onClick={() => useNav("/dashboard")}>
+      <button className={styles.menuItem} onClick={() => navigate("/dashboard")}>
         <div className={styles.icon}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -70,7 +70,7 @@ const Navbar = () => {
         {isHovered && <div className={styles.menuName}>Dashboard</div>}
       </button>
 
-      <button className={styles.menuItem} onClick={() => useNav("/courses")}>
+      <button className={styles.menuItem} onClick={() => navigate("/courses")}>
         <div className={styles.icon}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -84,7 +84,7 @@ const Navbar = () => {
         {isHovered && <div className={styles.menuName}>Courses</div>}
       </button>
 
-      <button className={styles.menuItem} onClick={() => useNav("/planner")}>
+      <button className={styles.menuItem} onClick={() => navigate("/planner")}>
         <div className={styles.icon}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -103,7 +103,7 @@ const Navbar = () => {
         {isHovered && <div className={styles.menuName}>Planner</div>}
       </button>
 
-      <button className={styles.menuItem} onClick={() => useNav("/studyzone")}>
+      <button className={styles.menuItem} onClick={() => navigate("/studyzone")}>
         <div className={styles.icon}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -124,7 +124,7 @@ const Navbar = () => {
         {isHovered && <div className={styles.menuName}>Studyzone</div>}
       </button>
 
-      <button className={styles.menuItem} onClick={() => useNav("/settings")}>
+      <button className={styles.menuItem} onClick={() => navigate("/settings")}>
         <div className={styles.icon}>
           <svg
             xmlns="http://www.w3.org/2000/svg"

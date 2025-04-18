@@ -6,7 +6,7 @@ import NotificationPanel from './NotificationPanel';
 
 export const Topbar = () => {
   const { user } = useAuthStore();
-  const useNav = useNavigate();
+  const navigate = useNavigate();
   const [showNotification, setShowNotification] = useState(false);
 
   const panelRef = useRef(null);
@@ -37,7 +37,7 @@ export const Topbar = () => {
   return (
     <>
       <div className={styles.container}>
-        <div className={styles.logo} onClick={() => useNav('/dashboard')}>STUDIFY</div>
+        <div className={styles.logo} onClick={() => navigate('/dashboard')}>STUDIFY</div>
         <div className={styles.rightSide}>
           <div
             className={styles.notification}
