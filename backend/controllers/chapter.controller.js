@@ -74,9 +74,21 @@ export const updateChapter = async (req, res) => {
         }
 
         const { title, content } = req.body; // extract fields to avoid blindly passing req.body
+        
+        // Validate and sanitize input
+        if (typeof title !== "string" || title.trim() === "") {
+            return res.status(400).json({ message: "Invalid title" });
+        }
+        if (typeof content !== "string" || content.trim() === "") {
+            return res.status(400).json({ message: "Invalid content" });
+        }
+        
+        const sanitizedTitle = title.trim();
+        const sanitizedContent = content.trim();
+        
         const updatedChapter = await Chapter.findByIdAndUpdate(
             id,
-            { title, content },
+            { title: sanitizedTitle, content: sanitizedContent },
             { new: true, runValidators: true }
         );
 
