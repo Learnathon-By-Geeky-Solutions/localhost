@@ -7,8 +7,16 @@ import {
   deleteChapter,
 } from "../controllers/chapter.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
+import rateLimit from "express-rate-limit";
 
 const router = express.Router();
+
+// Configure rate limiter: maximum of 100 requests per 15 minutes
+const getChaptersLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: "Too many requests from this IP, please try again later.",
+});
 
 // Create a chapter
 router.post("/", protectRoute, createChapter);
@@ -19,7 +27,7 @@ router.post("/", protectRoute, createChapter);
 /**
  * @changed_the_path_to_maintain_consistancy
  */
-router.get("/all/:courseId", protectRoute, getChapters);
+router.get("/all/:courseId", protectRoute, getChaptersLimiter, getChapters);
 
 // Get a single chapter by ID
 router.get("/:id", protectRoute, getChapterById);
