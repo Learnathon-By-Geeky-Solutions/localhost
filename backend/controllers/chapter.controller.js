@@ -73,17 +73,22 @@ export const updateChapter = async (req, res) => {
             return res.status(400).json({ message: "Invalid chapter ID" });
         }
 
-        const updates = {};
-        if (typeof req.body.title === "string") updates.title = req.body.title;
-        if (typeof req.body.content === "string") updates.content = req.body.content;
-
-        if (Object.keys(updates).length === 0) {
-            return res.status(400).json({ message: "No valid fields to update" });
+        const { title, content } = req.body; // extract fields to avoid blindly passing req.body
+        
+        // Validate and sanitize input
+        if (typeof title !== "string" || title.trim() === "") {
+            return res.status(400).json({ message: "Invalid title" });
         }
-
-        const updatedChapter = await Chapter.findOneAndUpdate(
-            { _id: mongoose.Types.ObjectId(id) },
-            updates,
+        if (typeof content !== "string" || content.trim() === "") {
+            return res.status(400).json({ message: "Invalid content" });
+        }
+        
+        const sanitizedTitle = title.trim();
+        const sanitizedContent = content.trim();
+        
+        const updatedChapter = await Chapter.findByIdAndUpdate(
+            id,
+            { title: sanitizedTitle, content: sanitizedContent },
             { new: true, runValidators: true }
         );
 
