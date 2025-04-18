@@ -7,17 +7,18 @@ import {
   updateCourse,
 } from "../controllers/course.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
+import { rateLimiter } from "../middleware/rateLimit.middleware.js";
 
 const router = express.Router();
 
-router.post("/", protectRoute, createCourse);
+router.post("/", rateLimiter, protectRoute, createCourse);
 
-router.get("/", protectRoute, getCourses);
+router.get("/", rateLimiter, protectRoute, getCourses);
 
-router.get("/:id", protectRoute, getCourseById);
+router.get("/:id", rateLimiter, protectRoute, getCourseById);
 
-router.put("/:id", protectRoute, updateCourse);
+router.put("/:id", rateLimiter, protectRoute, updateCourse);
 
-router.delete("/:id", protectRoute, deleteCourse);
+router.delete("/:id", rateLimiter, protectRoute, deleteCourse);
 
 export default router;
