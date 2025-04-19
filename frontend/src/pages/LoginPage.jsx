@@ -10,7 +10,7 @@ const LoginPage = () => {
     const [showError, setShowError] = useState(false);
 
     const { user, authError, login } = useAuthStore();
-    const useNav = useNavigate();
+    const navigate = useNavigate();
     
 
 
@@ -19,7 +19,6 @@ const LoginPage = () => {
         e.preventDefault();
 
         if (!email || !pass) {
-            // setShowError(false);
             setShowError(true);
             setTimeout(() => {
                 setShowError(false);
@@ -50,7 +49,6 @@ const LoginPage = () => {
         <div className={styles.container} >
 
             <div className={styles.leftSide}>
-                {/* <div className={styles.logo}>STUDIFY</div> */}
                 <img src="/loginImg.jpg" alt="STUDIFY Logo" />
 
             </div>
@@ -62,7 +60,6 @@ const LoginPage = () => {
                         <div className={styles.logo}>STUDIFY</div>
                     </div>
 
-                    {/* <div className={styles.inputField}> */}
                     <div className={showError ? `${styles.inputField} ${styles.shake}` : styles.inputField}>
 
                         <div className={styles.icon}>
@@ -71,7 +68,6 @@ const LoginPage = () => {
                             </svg>
                         </div>
                         <div className={styles.field}>
-                            {/* <label>Email</label> */}
                             <input placeholder='Email' type='email'
                                 value={email} onChange={(e) => setEmail(e.target.value)} />
 
@@ -87,7 +83,6 @@ const LoginPage = () => {
                         </div>
 
                         <div className={styles.field}>
-                            {/* <label>Password</label> */}
                             <input placeholder='Password' type={seePass ? "text" : "password"}
                                 value={pass} onChange={(e) => setPass(e.target.value)} />
 
@@ -110,7 +105,7 @@ const LoginPage = () => {
                     </div>
                     
                     <div className={styles.errorZone}>
-                        <p onClick={()=>useNav('/recover')}>Forget password?</p>
+                        <p onClick={()=>navigate('/recover')}>Forget password?</p>
                         {showError && (
                             <div className={styles.error}>
                                 Invalid Credentials
@@ -120,7 +115,7 @@ const LoginPage = () => {
 
                     <button className={styles.btn} type='submit'>Login</button>
 
-                    <p onClick={()=>useNav('/signup')}>Don't have an account? Sign Up</p>
+                    <p onClick={()=>navigate('/signup')}>Don't have an account? Sign Up</p>
                 </form>
 
             </div>

@@ -1,6 +1,5 @@
 .container {
     width: 5%;
-    /* background-color: lightslategray; */
     background-color: lightslategray;
     display: flex;
     flex-direction: column;
@@ -32,7 +31,6 @@
 }
 
 .menuItem:hover {
-    /* background-color:#ffb6b9 ; */
     border: 2px solid #6c5b7b;
     cursor: pointer;
 
@@ -54,7 +52,6 @@
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    /* margin: 5px; */
 
 }
 

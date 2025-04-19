@@ -4,6 +4,8 @@ import { Navigate } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
 import { Topbar } from './Topbar';
 import Navbar from './Navbar';
+import PropTypes from "prop-types";
+
 
 import styles from './protectedLayout.module.css';
 
@@ -24,5 +26,10 @@ const ProtectedLayout = ({ children }) => {
     </div>
   );
 };
+
+ProtectedLayout.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
 
 export default ProtectedLayout;

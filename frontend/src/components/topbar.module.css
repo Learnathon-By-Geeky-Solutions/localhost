@@ -9,9 +9,7 @@
 }
 
 .logo{
-    /* background-color:antiquewhite; */
     border-radius: 20px;
-
     display: flex;
     justify-content: center;
     align-items: center;
@@ -48,8 +46,6 @@
     margin:10px;
     font-weight: bold;
     font-size:large;
-    /* padding: 5px; */
-
     display: flex;
     justify-content: center;
     align-items: center;
@@ -58,7 +54,6 @@
 
 .notification{
     margin:10px;
-    /* margin: 20px; */
     background-color: lightslategray;
     border-radius: 50%;
     width: 30px;
