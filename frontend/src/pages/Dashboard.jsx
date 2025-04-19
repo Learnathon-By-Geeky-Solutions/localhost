@@ -38,6 +38,12 @@ const Dashboard = () => {
             <li>dsds</li>
             <li>dsds</li>
             <li>dsds</li>
+            <li>dsds</li>
+            <li>dsds</li>
+            <li>dsds</li>
+            <li>dsds</li>
+            <li>dsds</li>
+            <li>dsds</li>
 
           </ul>
         </div>
@@ -63,6 +69,11 @@ const Dashboard = () => {
         <div className={styles.todayTasks}>
           <h3>Today's Tasks</h3>
           <ul>
+            <li>dsds</li>
+            <li>dsds</li>
+            <li>dsds</li>
+            <li>dsds</li>
+            <li>dsds</li>
             <li>dsds</li>
             <li>dsds</li>
             <li>dsds</li>
