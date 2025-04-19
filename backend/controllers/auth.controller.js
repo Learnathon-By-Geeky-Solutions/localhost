@@ -134,7 +134,13 @@ export const sendResetOtp = async (req, res) => {
       from: process.env.EMAIL_USER,
       to: user.email,
       subject: "Password Reset OTP",
-      text: `Your OTP for password reset is ${otp}. It is valid for 10 minutes.`,
+      html: `
+        <p>Hello ${user.fullName || "User"},</p>
+        <p>Your OTP for resetting your password is: <strong>${otp}</strong></p>
+        <p>This code is valid for 10 minutes.</p>
+        <p>If you didn’t request this, you can ignore this email.</p>
+        <p>— Studify Team</p>
+      `,
     };
 
     await transporter.sendMail(mailOptions);

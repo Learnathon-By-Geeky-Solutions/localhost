@@ -262,10 +262,6 @@ const RecoverPage = () => {
               </button>
             </>
           )}
-
-          <p onClick={() => navigate("/login")}>
-            Remember your password? Login
-          </p>
         </form>
       </div>
     </div>
