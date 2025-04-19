@@ -20,7 +20,6 @@ const Dashboard = () => {
         setShowWelcome(false);
       }, 3000);
       localStorage.setItem(`hasSeenWelcome`, "true");
-      // console.log("aaa");
       
     }
   }, []);

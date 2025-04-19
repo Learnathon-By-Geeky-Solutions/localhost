@@ -6,18 +6,16 @@
   justify-content: space-between;
 }
 
-.logo {
-  /* background-color:antiquewhite; */
-  border-radius: 20px;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: bolder;
-  font-size: xx-large;
-  padding: 5px;
-  margin-left: 2%;
-  cursor: pointer;
+.logo{
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bolder;
+    font-size:xx-large;
+    padding: 5px;
+    margin-left: 2%;
+    cursor: pointer;
 }
 
 .rightSide {
@@ -40,44 +38,23 @@
   align-items: center;
 }
 
-.name {
-  margin: 10px;
-  font-weight: bold;
-  font-size: large;
-  /* padding: 5px; */
+.name{
+    margin:10px;
+    font-weight: bold;
+    font-size:large;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
-.notification {
-  margin: 10px;
-  position: relative;
-  background-color: lightslategray;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-}
-
-.badge {
-  position: absolute;
-  top: -8px;
-  right: -6px;
-  background-color: rgb(148, 76, 106);
-  color: white;
-  border-radius: 50%;
-  min-width: 16px;
-  height: 18px;
-  font-size: 11px;
-  font-weight: 600;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 2px solid #ffb6b9;
-  padding: 1px;
+.notification{
+    margin:10px;
+    background-color: lightslategray;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

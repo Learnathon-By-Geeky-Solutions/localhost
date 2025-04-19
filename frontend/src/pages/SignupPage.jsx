@@ -11,7 +11,7 @@ const SignupPage = () => {
     const [showError, setShowError] = useState(false);
 
     const { authError, signup } = useAuthStore();
-    const useNav = useNavigate();
+    const navigate = useNavigate();
 
 
 
@@ -33,7 +33,6 @@ const SignupPage = () => {
             return <Navigate to="/dashboard" />;
         } else {
             setShowError(true);
-            // setEmail('');
             setPass('');
             console.error("Signup failed:", authError || result?.error);
         }
@@ -47,7 +46,6 @@ const SignupPage = () => {
         <div className={styles.container} >
 
             <div className={styles.leftSide}>
-                {/* <div className={styles.logo}>STUDIFY</div> */}
                 <img src="/signupImg.jpg" alt="STUDIFY Logo" />
 
             </div>
@@ -63,8 +61,8 @@ const SignupPage = () => {
                     <div className={showError ? `${styles.inputField} ${styles.shake}` : styles.inputField}>
 
                         <div className={styles.icon}>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-                                <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clip-rule="evenodd" />
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
+                                <path fillRule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clipRule="evenodd" />
                             </svg>
 
                         </div>
@@ -90,7 +88,6 @@ const SignupPage = () => {
 
 
                         <div className={styles.field}>
-                            {/* <label>Email</label> */}
                             <input placeholder='Email' type='email'
                                 value={email} onChange={(e) => setEmail(e.target.value)} />
 
@@ -104,7 +101,6 @@ const SignupPage = () => {
                         </div>
 
                         <div className={styles.field}>
-                            {/* <label>Password</label> */}
                             <input placeholder='Password' type={seePass ? "text" : "password"}
                                 value={pass} onChange={(e) => setPass(e.target.value)} />
 
@@ -136,7 +132,7 @@ const SignupPage = () => {
 
                     <button className={styles.btn} type='submit'>Sign Up</button>
 
-                    <p onClick={() => useNav('/login')}>Already have an account? Login</p>
+                    <p onClick={() => navigate('/login')}>Already have an account? Login</p>
                 </form>
 
             </div>
