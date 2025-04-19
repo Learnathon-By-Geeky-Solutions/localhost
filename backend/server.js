@@ -10,9 +10,7 @@ import courseRoutes from "./routes/course.route.js";
 import chapterRoutes from "./routes/chapter.route.js";
 import taskRoutes from "./routes/task.route.js";
 import reminderRoutes from "./routes/reminder.route.js";
-import studyzoneRoutes from "./routes/studyzone.route.js"
-
-import "./services/notification.service.js";
+import studyzoneRoutes from "./routes/studyzone.route.js";
 
 const app = express();
 dotenv.config();
@@ -40,9 +38,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/chapters", chapterRoutes);
 app.use("/api/reminders", reminderRoutes);
-app.use("/api/tasks",taskRoutes);
+app.use("/api/tasks", taskRoutes);
 app.use("/api/studyzone", studyzoneRoutes);
-
 
 const port = process.env.SERVER_PORT;
 app.listen(port, () => {
