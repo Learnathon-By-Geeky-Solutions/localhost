@@ -69,21 +69,19 @@ const Courses = () => {
       </div>
 
       {courses.map((course) => (
-        <div
+        <button
           key={course._id}
-          tabIndex={0}
-          role='button'
           onClick={() => navigate(`/courses/${course._id}`)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              navigate(`/courses/${course._id}`);
-            }
-          }}
+          // onKeyDown={(e) => {
+          //   if (e.key === 'Enter' || e.key === ' ') {
+          //     navigate(`/courses/${course._id}`);
+          //   }
+          // }}
           className={styles.card}
         >
           <div className={styles.title}>{course.title}</div>
           <div className={styles.description}>{course.description}</div>
-        </div>
+        </button>
       ))}
 
 
