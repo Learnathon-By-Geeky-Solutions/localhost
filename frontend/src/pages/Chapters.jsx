@@ -74,21 +74,13 @@ const Chapters = () => {
       </div>
 
       {chapters.map((chapter) => (
-        <div
-
+        <button
           key={chapter._id}
-          role='button'
-          tabIndex={0}
           onClick={(e) => navigate(`/chapters/${chapter._id}`)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              navigate(`/courses/${chapter._id}`);
-            }
-          }}
           className={styles.card}
         >
           <div className={styles.title}>{chapter.title}</div>
-        </div>
+        </button>
       ))}
 
 

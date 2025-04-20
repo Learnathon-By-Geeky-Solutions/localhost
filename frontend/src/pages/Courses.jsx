@@ -72,11 +72,6 @@ const Courses = () => {
         <button
           key={course._id}
           onClick={() => navigate(`/courses/${course._id}`)}
-          // onKeyDown={(e) => {
-          //   if (e.key === 'Enter' || e.key === ' ') {
-          //     navigate(`/courses/${course._id}`);
-          //   }
-          // }}
           className={styles.card}
         >
           <div className={styles.title}>{course.title}</div>
