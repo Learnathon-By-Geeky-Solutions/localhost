@@ -8,42 +8,39 @@ const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 export const createTask = async (req, res) => {
   try {
-    const { title, description, startTime, endTime, priority, status, courseId, chapterId } = req.body;
+    const {
+      title,
+      description,
+      startTime,
+      endTime,
+      priority,
+      status,
+      courseId,
+      chapterId,
+    } = req.body;
 
+    // Check authentication
     if (!req.user) {
       return res.status(401).json({ message: "Unauthorized - No user found" });
     }
 
+    // Validate time logic
     if (startTime && endTime && new Date(endTime) <= new Date(startTime)) {
       return res.status(400).json({ message: "endTime must be after startTime." });
     }
 
-    // Validate and fetch course
-    let validCourse = null;
-    if (courseId) {
-      if (!isValidObjectId(courseId)) {
-        return res.status(400).json({ message: "Invalid courseId format." });
-      }
-
-      validCourse = await Course.findById(courseId);
-      if (!validCourse) {
-        return res.status(400).json({ message: "Invalid courseId. Course not found." });
-      }
+    // Validate optional relations
+    const course = await validateCourse(courseId);
+    if (course instanceof Error) {
+      return res.status(400).json({ message: course.message });
     }
 
-    // Validate and fetch chapter
-    let validChapter = null;
-    if (chapterId) {
-      if (!isValidObjectId(chapterId)) {
-        return res.status(400).json({ message: "Invalid chapterId format." });
-      }
-
-      validChapter = await Chapter.findById(chapterId);
-      if (!validChapter) {
-        return res.status(400).json({ message: "Invalid chapterId. Chapter not found." });
-      }
+    const chapter = await validateChapter(chapterId);
+    if (chapter instanceof Error) {
+      return res.status(400).json({ message: chapter.message });
     }
 
+    // Create task
     const newTask = new Task({
       title,
       description,
@@ -51,8 +48,8 @@ export const createTask = async (req, res) => {
       endTime,
       priority,
       status,
-      courseId: validCourse ? validCourse._id : null,
-      chapterId: validChapter ? validChapter._id : null,
+      courseId: course?._id || null,
+      chapterId: chapter?._id || null,
       user: req.user._id,
     });
 
@@ -62,6 +59,32 @@ export const createTask = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+// --- Helper functions below for createTask:
+
+const validateCourse = async (courseId) => {
+  if (!courseId) return null;
+  if (!isValidObjectId(courseId)) return new Error("Invalid courseId format.");
+
+  const course = await Course.findById(courseId);
+  if (!course) return new Error("Invalid courseId. Course not found.");
+
+  return course;
+};
+
+const validateChapter = async (chapterId) => {
+  if (!chapterId) return null;
+  if (!isValidObjectId(chapterId)) return new Error("Invalid chapterId format.");
+
+  const chapter = await Chapter.findById(chapterId);
+  if (!chapter) return new Error("Invalid chapterId. Chapter not found.");
+
+  return chapter;
+};
+
+
+//////////////////////////////////////////////////////////////////////
+
 
 export const getUserTasks = async (req, res) => {
   try {
