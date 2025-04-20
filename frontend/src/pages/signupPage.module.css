@@ -79,6 +79,7 @@ h2 {
 }
 
 .icon {
+  all:unset;
   margin: 5px;
   height: 100%;
   width: 5%;
@@ -119,8 +120,8 @@ label {
   justify-content: right;
 }
 
-p {
-
+.textClick {
+  all:unset;
   color: #a3a8b5;
   /* Light Gray Text */
   padding: 5px;
@@ -129,7 +130,7 @@ p {
 }
 
 
-p:hover {
+.textClick:hover {
   cursor: pointer;
   text-decoration: underline;
   color: #6c5b7b;

@@ -115,7 +115,7 @@ const LoginPage = () => {
                 onChange={(e) => setPass(e.target.value)}
               />
             </div>
-            <div className={styles.icon} onClick={toggleSeePass}>
+            <button className={styles.icon} onClick={toggleSeePass}>
               {seePass ? (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -152,11 +152,16 @@ const LoginPage = () => {
                   />
                 </svg>
               )}
-            </div>
+            </button>
           </div>
 
           <div className={styles.errorZone}>
-            <p onClick={() => navigate("/recover")}>Forgot password?</p>
+            <button 
+              onClick={() => navigate("/recover")}
+              className={styles.textClick}
+            >
+              Forgot password?
+            </button>
             {showError && (
               <div className={styles.error}>Invalid Credentials</div>
             )}
@@ -166,9 +171,12 @@ const LoginPage = () => {
             Login
           </button>
 
-          <p onClick={() => navigate("/signup")}>
+          <button
+            onClick={() => navigate("/signup")}
+            className={styles.textClick}
+          >
             Don't have an account? Sign Up
-          </p>
+          </button>
         </form>
       </div>
     </div>

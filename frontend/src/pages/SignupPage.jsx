@@ -105,7 +105,7 @@ const SignupPage = () => {
                                 value={pass} onChange={(e) => setPass(e.target.value)} />
 
                         </div>
-                        <div className={styles.icon} onClick={toggleSeePass}>
+                        <button className={styles.icon} onClick={toggleSeePass}>
                             {
                                 seePass ?
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -119,7 +119,7 @@ const SignupPage = () => {
                             }
 
 
-                        </div>
+                        </button>
                     </div>
 
                     <div className={styles.errorZone}>
@@ -132,7 +132,12 @@ const SignupPage = () => {
 
                     <button className={styles.btn} type='submit'>Sign Up</button>
 
-                    <p onClick={() => navigate('/login')}>Already have an account? Login</p>
+                    <button
+                        onClick={() => navigate('/login')}
+                        className={styles.textClick}
+                    >
+                        Already have an account? Login
+                    </button>
                 </form>
 
             </div>
