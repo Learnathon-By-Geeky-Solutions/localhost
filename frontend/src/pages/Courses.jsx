@@ -71,7 +71,6 @@ const Courses = () => {
       {courses.map((course) => (
         <div
           key={course._id}
-          role="button"
           tabIndex={0}
           onClick={() => navigate(`/courses/${course._id}`)}
           onKeyDown={(e) => {
