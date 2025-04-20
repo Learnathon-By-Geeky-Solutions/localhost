@@ -114,19 +114,27 @@ export const getAuthUser = (req, res) => {
 //send password reset otp
 export const sendResetOtp = async (req, res) => {
   const { email } = req.body;
+
   if (!email) {
     return res.json({ success: false, message: "Please provide email" });
   }
 
+  if (!validator.isEmail(email)) {
+    return res.json({ success: false, message: "Invalid email format" });
+  }
+
+  const sanitizedEmail = validator.normalizeEmail(email);
+
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: sanitizedEmail });
     if (!user) {
       return res.json({ success: false, message: "User not found" });
     }
-    const otp = Math.floor(100000 + Math.random() * 900000); // Generate a 6-digit OTP
+
+    const otp = Math.floor(100000 + Math.random() * 900000);
 
     user.resetOtp = otp;
-    user.resetOtpExpireAt = Date.now() + 10 * 60 * 1000; // OTP expires in 10 minutes
+    user.resetOtpExpireAt = Date.now() + 10 * 60 * 1000;
 
     await user.save();
 
@@ -160,21 +168,31 @@ export const resetPassword = async (req, res) => {
   if (!email || !otp || !newPassword) {
     return res.json({ success: false, message: "Please provide all fields" });
   }
+
+  if (!validator.isEmail(email)) {
+    return res.json({ success: false, message: "Invalid email format" });
+  }
+
+  if (!validator.isNumeric(otp.toString()) || otp.toString().length !== 6) {
+    return res.json({ success: false, message: "Invalid OTP format" });
+  }
+
+  const sanitizedEmail = validator.normalizeEmail(email);
+
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: sanitizedEmail });
     if (!user) {
       return res.json({ success: false, message: "User not found" });
     }
 
-    if (user.resetOtp === "" || user.resetOtp !== otp) {
+    if (user.resetOtp === "" || user.resetOtp.toString() !== otp.toString()) {
       return res.json({ success: false, message: "Invalid OTP" });
     }
 
-    if (user.resetOtpExpireAt < Date.now) {
+    if (user.resetOtpExpireAt < Date.now()) {
       return res.json({ success: false, message: "OTP expired" });
     }
 
-    // Hash the new password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
 
