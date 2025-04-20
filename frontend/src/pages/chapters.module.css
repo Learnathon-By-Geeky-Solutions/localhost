@@ -16,6 +16,7 @@
 
 
 .card {
+  all: unset;
   margin: 25px;
   width: 220px;
   height: 180px;
