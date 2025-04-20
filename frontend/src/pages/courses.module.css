@@ -2,19 +2,16 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
-  /* padding: 20px; */
-  /* padding: 20px 20px 0px 0px; */
-
-  /* gap :20px; */
+  align-items: top;
   background-color: #f8f9fa;
   max-height: 100% ;
+  height: 100%;
   overflow-y: scroll; 
 
 }
 
 
-.courseCard {
+.card {
   margin: 25px;
   width: 220px;
   height: 180px;
@@ -22,15 +19,15 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #ffb6b9; /* Dark blue-gray background */
+  background-color: #ffb6b9; 
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   font-size: 1.1rem;
   font-weight: 600;
   text-align: center;
   padding: 20px;
-  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition */
-  color: gray; /* Light text */
+  transition: background-color 0.3s ease, transform 0.2s ease; 
+  color: gray; 
 
 }
 
@@ -43,19 +40,19 @@
 .icon {
   width: 48px;
   height: 48px;
-  margin-bottom: 10px; /* Add spacing below the icon */
+  margin-bottom: 10px; 
 }
 
 .title {
-  font-size: 1.2rem; /* Slightly larger title */
-  margin-bottom: 8px; /* Spacing between title and description */
-  font-weight: 700; /* Bold title */
-  color: darkslategrey; /* Light text */
+  font-size: 1.2rem; 
+  margin-bottom: 8px;
+  font-weight: 700; 
+  color: darkslategrey; 
   
 }
 
 .description {
-  font-size: 0.9rem; /* Smaller font size for description */
+  font-size: 0.9rem; 
   color: lightslategray;
 }
 

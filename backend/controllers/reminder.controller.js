@@ -6,15 +6,21 @@ import User from "../models/user.model.js";
 // Create a new reminder
 export const createReminder = async (req, res) => {
   try {
-    const { taskId } = req.body;
+    const { taskId, offset } = req.body; // Offset is the number of minutes before the task's start time
+
     const userId = req.user.id;
 
-    if (!taskId) {
-      return res.status(400).json({ error: "Task ID is required" });
+    if (!taskId || offset === undefined) {
+      return res.status(400).json({ error: "Task ID and offset time are required" });
     }
 
     if (!mongoose.Types.ObjectId.isValid(taskId)) {
       return res.status(400).json({ error: "Invalid Task ID" });
+    }
+
+    // Validate that the offset is a positive number
+    if (typeof offset !== "number" || offset <= 0) {
+      return res.status(400).json({ error: "Offset must be a positive number" });
     }
 
     const task = await Task.findById(taskId);
@@ -22,10 +28,16 @@ export const createReminder = async (req, res) => {
       return res.status(404).json({ error: "Task not found" });
     }
 
+    // Calculate the notification time: task's start time minus the offset (in minutes)
+    const notificationTime = new Date(task.startTime);
+    notificationTime.setMinutes(notificationTime.getMinutes() - offset);
+
+    // Create a new reminder with the calculated notification time
     const newReminder = new Reminder({
       taskId,
-      dueDate: task.dueDate,
       userId,
+      offset,
+      notificationTime: new Date(task.startTime - offset * 60 * 1000)  // Convert offset to milliseconds
     });
 
     await newReminder.save();
@@ -41,19 +53,22 @@ export const createReminder = async (req, res) => {
   }
 };
 
+
+// Get all reminders
 // Get all reminders
 export const getReminders = async (req, res) => {
   try {
     const userId = req.user.id;
     const reminders = await Reminder.find({ userId }).populate({
       path: "taskId",
-      select: "title description dueDate",
+      select: "title description startTime", // Populate task with startTime now instead of dueDate
     });
     res.status(200).json(reminders);
   } catch (error) {
     res.status(500).json({ error: "Server error" });
   }
 };
+
 
 // Get a specific reminder by ID
 export const getReminderById = async (req, res) => {
@@ -76,10 +91,11 @@ export const getReminderById = async (req, res) => {
 };
 
 // Update a reminder
+// Update a reminder
 export const updateReminder = async (req, res) => {
   try {
     const reminderId = req.params.id;
-    const { taskId, dueDate } = req.body;
+    const { taskId, offset } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(reminderId)) {
       return res.status(400).json({ error: "Invalid Reminder ID" });
@@ -90,6 +106,7 @@ export const updateReminder = async (req, res) => {
       return res.status(404).json({ error: "Reminder not found" });
     }
 
+    // Update task if taskId is provided
     if (taskId) {
       if (!mongoose.Types.ObjectId.isValid(taskId)) {
         return res.status(400).json({ error: "Invalid Task ID" });
@@ -101,10 +118,13 @@ export const updateReminder = async (req, res) => {
       }
 
       existingReminder.taskId = taskId;
-    }
 
-    if (dueDate) {
-      existingReminder.dueDate = dueDate;
+      // Recalculate notification time if offset is provided
+      if (offset !== undefined) {
+        const notificationTime = new Date(task.startTime);
+        notificationTime.setMinutes(notificationTime.getMinutes() - offset);
+        existingReminder.notificationTime = notificationTime;
+      }
     }
 
     await existingReminder.save();
@@ -119,6 +139,7 @@ export const updateReminder = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
 
 // Delete a reminder
 export const deleteReminder = async (req, res) => {
