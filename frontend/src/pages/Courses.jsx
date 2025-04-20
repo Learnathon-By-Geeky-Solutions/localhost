@@ -72,6 +72,7 @@ const Courses = () => {
         <div
           key={course._id}
           tabIndex={0}
+          role='button'
           onClick={() => navigate(`/courses/${course._id}`)}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {

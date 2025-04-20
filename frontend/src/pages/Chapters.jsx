@@ -77,6 +77,7 @@ const Chapters = () => {
         <div
 
           key={chapter._id}
+          role='button'
           tabIndex={0}
           onClick={(e) => navigate(`/chapters/${chapter._id}`)}
           onKeyDown={(e) => {
