@@ -8,10 +8,14 @@ const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 export const createTask = async (req, res) => {
   try {
-    const { title, description, dueDate, priority, status, courseId, chapterId } = req.body;
+    const { title, description, startTime, endTime, priority, status, courseId, chapterId } = req.body;
 
     if (!req.user) {
       return res.status(401).json({ message: "Unauthorized - No user found" });
+    }
+
+    if (startTime && endTime && new Date(endTime) <= new Date(startTime)) {
+      return res.status(400).json({ message: "endTime must be after startTime." });
     }
 
     // Validate and fetch course
@@ -43,7 +47,8 @@ export const createTask = async (req, res) => {
     const newTask = new Task({
       title,
       description,
-      dueDate,
+      startTime,
+      endTime,
       priority,
       status,
       courseId: validCourse ? validCourse._id : null,
@@ -67,7 +72,7 @@ export const getUserTasks = async (req, res) => {
     const tasks = await Task.find({ user: req.user._id })
       .populate({ path: "courseId", select: "title" })
       .populate({ path: "chapterId", select: "title" })
-      .sort({ dueDate: 1 });
+      .sort({ startTime: 1 });
 
     res.json(tasks);
   } catch (error) {
@@ -77,7 +82,7 @@ export const getUserTasks = async (req, res) => {
 
 export const updateTask = async (req, res) => {
   try {
-    const { title, description, dueDate, priority, status, courseId, chapterId } = req.body;
+    const { title, description, startTime, endTime, priority, status, courseId, chapterId } = req.body;
 
     const task = await Task.findById(req.params.id);
     if (!task) return res.status(404).json({ message: "Task not found" });
@@ -86,10 +91,14 @@ export const updateTask = async (req, res) => {
       return res.status(403).json({ message: "Unauthorized access" });
     }
 
-    // Update fields
+    if (startTime && endTime && new Date(endTime) <= new Date(startTime)) {
+      return res.status(400).json({ message: "endTime must be after startTime." });
+    }
+
     task.title = title ?? task.title;
     task.description = description ?? task.description;
-    task.dueDate = dueDate ?? task.dueDate;
+    task.startTime = startTime ?? task.startTime;
+    task.endTime = endTime ?? task.endTime;
     task.priority = priority ?? task.priority;
     task.status = status ?? task.status;
 
@@ -160,7 +169,7 @@ export const getTasksByCourse = async (req, res) => {
     const tasks = await Task.find({ user: req.user._id, courseId })
       .populate("courseId", "title")
       .populate("chapterId", "title")
-      .sort({ dueDate: 1 });
+      .sort({ startTime: 1 });
 
     res.json(tasks);
   } catch (error) {
@@ -183,7 +192,7 @@ export const getTasksByChapter = async (req, res) => {
     const tasks = await Task.find({ user: req.user._id, chapterId })
       .populate("courseId", "title")
       .populate("chapterId", "title")
-      .sort({ dueDate: 1 });
+      .sort({ startTime: 1 });
 
     res.json(tasks);
   } catch (error) {
