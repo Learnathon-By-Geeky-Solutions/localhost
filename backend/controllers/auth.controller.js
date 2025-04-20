@@ -115,49 +115,46 @@ export const getAuthUser = (req, res) => {
 export const sendResetOtp = async (req, res) => {
   const { email } = req.body;
 
-  if (!email) {
-    return res.json({ success: false, message: "Please provide email" });
-  }
-
-  if (!validator.isEmail(email)) {
-    return res.json({ success: false, message: "Invalid email format" });
+  if (!email || !validator.isEmail(email)) {
+    return res.json({
+      success: false,
+      message: "If this email is registered, an OTP has been sent.",
+    });
   }
 
   const sanitizedEmail = validator.normalizeEmail(email);
 
   try {
     const user = await User.findOne({ email: sanitizedEmail });
-    if (!user) {
-      return res.json({ success: false, message: "User not found" });
+
+    if (user) {
+      const otp = Math.floor(100000 + Math.random() * 900000);
+      user.resetOtp = otp;
+      user.resetOtpExpireAt = Date.now() + 10 * 60 * 1000;
+      await user.save();
+
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: user.email,
+        subject: "Password Reset OTP",
+        html: `
+          <p>Hello ${user.fullName || "User"},</p>
+          <p>Your OTP for resetting your password is: <strong>${otp}</strong></p>
+          <p>This code is valid for 10 minutes.</p>
+          <p>If you didn’t request this, you can ignore this email.</p>
+          <p>— Studify Team</p>
+        `,
+      };
+
+      await transporter.sendMail(mailOptions);
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000);
-
-    user.resetOtp = otp;
-    user.resetOtpExpireAt = Date.now() + 10 * 60 * 1000;
-
-    await user.save();
-
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: user.email,
-      subject: "Password Reset OTP",
-      html: `
-        <p>Hello ${user.fullName || "User"},</p>
-        <p>Your OTP for resetting your password is: <strong>${otp}</strong></p>
-        <p>This code is valid for 10 minutes.</p>
-        <p>If you didn’t request this, you can ignore this email.</p>
-        <p>— Studify Team</p>
-      `,
-    };
-
-    await transporter.sendMail(mailOptions);
     return res.json({
       success: true,
-      message: `OTP sent to ${user.email}`,
+      message: "If this email is registered, an OTP has been sent.",
     });
   } catch (error) {
-    return res.json({ success: false, message: error.message });
+    return res.json({ success: false, message: "Something went wrong" });
   }
 };
 
