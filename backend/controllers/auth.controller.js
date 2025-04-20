@@ -128,7 +128,16 @@ export const sendResetOtp = async (req, res) => {
     const user = await User.findOne({ email: sanitizedEmail });
 
     if (user) {
-      const otp = Math.floor(100000 + Math.random() * 900000);
+      function generateSecureOTP(length) {
+        const digits = '0123456789';
+        let otp = '';
+        const bytes = crypto.randomBytes(length);
+        for (let i = 0; i < length; i++) {
+          otp += digits[bytes[i] % 10];
+        }
+        return otp;
+      }
+      const otp = generateSecureOTP(6);
       user.resetOtp = otp;
       user.resetOtpExpireAt = Date.now() + 10 * 60 * 1000;
       await user.save();
