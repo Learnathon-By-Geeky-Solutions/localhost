@@ -20,19 +20,10 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: `${process.env.BASE_URL}:${process.env.CLIENT_PORT}`, // to allow requests from the dummy-frontend
-    credentials: true,
-  })
-);
-
-/*
-app.use(
-  cors({
     origin: `${process.env.BASE_URL}:${process.env.CLIENT_PORT}`,
     credentials: true,
   })
 );
-*/
 
 app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
