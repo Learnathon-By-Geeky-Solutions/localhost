@@ -5,7 +5,6 @@ import TaskCalendar from "../components/TaskCalendar";
 const Planner = () => {
   return (
     <div className={styles.container}>
-      <h2 className={styles.plannerHeader}>Planner Calendar</h2>
       <TaskCalendar />
     </div>
   );
