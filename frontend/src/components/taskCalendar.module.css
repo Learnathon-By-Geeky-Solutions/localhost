@@ -1,34 +1,54 @@
-.calendarWrapper {
-  position: relative;
-  padding: 24px;
-  height: 100%;
+.container {
+
   width: 100%;
+  /* background-color: #f8fafc; */
+  /* background-color: red; */
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: #f8fafc;
   color: #334155;
   /* Make wrapper scrollable if needed */
-  overflow: auto;
+  /* overflow: auto; */
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  /* align-items: center; */
+
 }
  
+.calendar{
+  width: 85%;
+  height: 90%;
+
+}
+
 .taskPopup {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   position: absolute;
   width: 400px;
-  background: #ffffff;
+  background: #e0e0e0;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
   border-radius: 12px;
   padding: 14px;
   z-index: 9999;
   animation: fadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   border: none;
-  border-top: 4px solid #3b82f6;
   box-sizing: border-box;
-  /* Remove the fixed positioning from original CSS */
-  /* top: 20px; */
-  /* left: 50%; */
-  /* transform: translateX(-50%); */
+
 } 
+
+
+.taskPopup input,
+.taskPopup textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  resize: none;
+  transition: border 0.3s ease;
+  box-sizing: border-box;
+}
 
 .popupHeader {
   display: flex;
@@ -37,28 +57,8 @@
   margin-bottom: 10px;
 }
 
-.statusDot {
-  width: 10px;
-  height: 10px;
-  background-color: #3b82f6;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
 
-.popupTitleInput {
-  flex-grow: 1;
-  border: 2px solid #e2e8f0;
-  background-color: #fff;
-  font-size: 14px;
-  font-weight: 600;
-  color: #0f172a;
-  outline: none;
-  padding: 6px 10px;
-  border-radius: 10px;
-  transition: all 0.2s ease;
-  width: 100%;
-  height: 36px;
-}
+
 
 .popupTitleInput:focus {
   border-color: #3b82f6;
@@ -100,6 +100,8 @@
 }
 
 .descriptionInput {
+
+
   width: 100%;
   min-height: 40px;
   border: 2px solid #e2e8f0;
@@ -126,6 +128,7 @@
   flex-direction: column;
   gap: 6px;
   margin: 10px 0;
+  width: 100%;
 }
 
 .courseSelect {
@@ -150,6 +153,22 @@
   border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
+
+.popUpPriority{
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.statusDot {
+  width: 10px;
+  height: 10px;
+  margin: 10px;
+  background-color: #3b82f6;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+
 
 .popupActions {
   display: flex;
@@ -539,11 +558,7 @@
 }
 
 /* Critical fix for scrolling - Create fixed height container */
-.calendarWrapper {
-  height: 100vh;
-  max-height: 100vh;
-  overflow: auto;
-}
+
 
 :global(.rbc-calendar) {
   min-height: 100%;
@@ -560,27 +575,27 @@
 }
 
 /* Prevent overlapping with fixed headers */
-:global(.rbc-calendar) {
+/* :global(.rbc-calendar) {
   padding-bottom: 40px;
-}
+} */
 
 /* Scrollbar styling */
-.calendarWrapper::-webkit-scrollbar {
+.container::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-.calendarWrapper::-webkit-scrollbar-track {
+.container::-webkit-scrollbar-track {
   background: #f1f5f9;
   border-radius: 10px;
 }
 
-.calendarWrapper::-webkit-scrollbar-thumb {
+.container::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 10px;
   border: 2px solid #f1f5f9;
 }
 
-.calendarWrapper::-webkit-scrollbar-thumb:hover {
+.container::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }

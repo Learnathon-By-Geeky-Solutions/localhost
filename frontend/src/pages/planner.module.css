@@ -2,17 +2,10 @@
 
 .container {
   display: flex;
-  justify-content: space-evenly;
   /* height: 100vh;  */
   width: 100%;
+  height: 100%;
   background-color: #f8f9fa;
-  max-height: 100%;
-  overflow-y: scroll;
-  }
-  
-  .plannerHeader {
-    font-size: 1.75rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-  
+  /* max-height: 100%; */
+  /* overflow-y: scroll; */
+}

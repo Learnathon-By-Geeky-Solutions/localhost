@@ -118,13 +118,13 @@
 //     if (start >= end) {
 //       end = new Date(start.getTime() + 60 * 60 * 1000); // Add 1 hour if invalid
 //     }
-  
+
 //     const updatedTasks = tasks.map((task) =>
 //       task._id === event._id ? { ...task, start, end } : task
 //     );
 //     setTasks(updatedTasks);
 //   };
-  
+
 
 //   const handleSelectSlot = ({ start, end }) => {
 //     const newTask = {
@@ -183,12 +183,12 @@
 
 //   const handleCreateTask = (e) => {
 //     e.preventDefault();
-    
+
 //     if (!newTask?.title?.trim()) {
 //       setWarning("Please enter a title for the task.");
 //       return;
 //     }
-    
+
 //     setWarning("");
 //     setTasks((prev) => [...prev, newTask]);
 //     setNewTask(null);
@@ -199,7 +199,7 @@
 //   };
 
 //   return (
-//     <div className={styles.calendarWrapper}>
+//     <div className={styles.container}>
 //       {selectedTask && (
 //         <div className={styles.taskPopup}>
 //           <div className={styles.popupHeader}>
@@ -635,43 +635,50 @@ const TaskCalendar = () => {
     if (start >= end) {
       end = new Date(start.getTime() + 60 * 60 * 1000); // Add 1 hour if invalid
     }
-  
+
     const updatedTasks = tasks.map((task) =>
       task._id === event._id ? { ...task, start, end } : task
     );
     setTasks(updatedTasks);
   };
-  
+
   // Calculate safe position for popup to avoid going offscreen
   const calculateSafePosition = (x, y) => {
     if (!calendarRef.current) return { x: 0, y: 0 };
-    
+
     const calendarRect = calendarRef.current.getBoundingClientRect();
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    const popupWidth = 400; // Width of the popup
-    const popupHeight = 400; // Estimated height of the popup
-    
-    // Calculate safe X position to keep popup within viewport and calendar
-    let safeX = Math.min(x, viewportWidth - popupWidth - 20);
-    safeX = Math.max(safeX, 10);
-    
-    // Calculate safe Y position
-    let safeY = Math.min(y, viewportHeight - popupHeight - 20);
-    safeY = Math.max(safeY, 10);
-    
-    return { x: safeX, y: safeY - calendarRect.top };
+    const W = calendarRect.width;
+    const H = calendarRect.height;
+
+    let safeX = 10;
+    if (x < W / 2) {
+      safeX = x + 10;
+    }
+    else {
+      safeX = x - W / 2;
+    }
+    let safeY = H / 4;
+
+    // // Calculate safe X position to keep popup within viewport and calendar
+    // let safeX = Math.min(x, W - 20);
+    // safeX = Math.max(safeX, 10);
+
+    // // // Calculate safe Y position
+    // let safeY = Math.min(y, H - 20);
+    // safeY = Math.max(safeY, 10);
+
+    return { x: safeX, y: safeY };
   };
 
   const handleSelectSlot = ({ start, end, box }) => {
     // Use the box coordinates (if available) or default to the calendar's position
     const x = box ? box.x : 0;
     const y = box ? box.y : 0;
-    
+
     // Calculate safe position
     const safePosition = calculateSafePosition(x, y);
     setPopupPosition(safePosition);
-    
+
     const newTask = {
       _id: Date.now().toString(),
       title: "",
@@ -733,12 +740,12 @@ const TaskCalendar = () => {
 
   const handleCreateTask = (e) => {
     e.preventDefault();
-    
+
     if (!newTask?.title?.trim()) {
       setWarning("Please enter a title for the task.");
       return;
     }
-    
+
     setWarning("");
     setTasks((prev) => [...prev, newTask]);
     setNewTask(null);
@@ -753,29 +760,16 @@ const TaskCalendar = () => {
     const handleAction = isNewTask ? handleCreateTask : handleUpdateTask;
     const setTaskData = isNewTask ? setNewTask : setSelectedTask;
     const closePopup = () => isNewTask ? setNewTask(null) : setSelectedTask(null);
-    
+
     return (
-      <div 
-        className={styles.taskPopup} 
+      <div
+        className={styles.taskPopup}
         style={{
-          position: 'absolute',
           left: `${popupPosition.x}px`,
           top: `${popupPosition.y}px`,
-          transform: 'none'
         }}
       >
         <div className={styles.popupHeader}>
-          <span
-            className={styles.statusDot}
-            style={{
-              backgroundColor:
-                taskData.priority === "High"
-                  ? "#f44336"
-                  : taskData.priority === "Medium"
-                  ? "#4285f4"
-                  : "#ff9800",
-            }}
-          />
           <input
             className={styles.popupTitleInput}
             value={taskData.title}
@@ -785,6 +779,7 @@ const TaskCalendar = () => {
             }}
             placeholder={isNewTask ? "Add title" : "Task title"}
           />
+
         </div>
         {warning && (
           <p style={{ color: "red", marginBottom: "10px" }}>{warning}</p>
@@ -861,6 +856,21 @@ const TaskCalendar = () => {
               ))}
             </select>
           )}
+        </div>
+
+        <div className={styles.popUpPriority}>
+
+          <div
+            className={styles.statusDot}
+            style={{
+              backgroundColor:
+                taskData.priority === "High"
+                  ? "#f44336"
+                  : taskData.priority === "Medium"
+                    ? "#4285f4"
+                    : "#ff9800",
+            }}
+          />
           <select
             className={styles.courseSelect}
             value={taskData.priority}
@@ -872,7 +882,11 @@ const TaskCalendar = () => {
             <option value="Medium">Medium Priority</option>
             <option value="High">High Priority</option>
           </select>
+
         </div>
+
+
+
         <div className={styles.popupActions}>
           {!isNewTask && (
             taskData.status === "Completed" ? (
@@ -924,11 +938,11 @@ const TaskCalendar = () => {
   };
 
   return (
-    <div className={styles.calendarWrapper}>
+    <div className={styles.container}>
       {selectedTask && renderPopup(selectedTask, false)}
       {newTask && renderPopup(newTask, true)}
 
-      <div ref={calendarRef}>
+      <div ref={calendarRef} className={styles.calendar}>
         <DnDCalendar
           localizer={localizer}
           events={tasks}
@@ -942,7 +956,6 @@ const TaskCalendar = () => {
           onSelectEvent={handleSelectEvent}
           onEventDrop={moveTask}
           onEventResize={moveTask}
-          style={{ height: "85vh" }}
           draggableAccessor={() => true}
           eventPropGetter={(event) => ({
             style: {
@@ -950,14 +963,12 @@ const TaskCalendar = () => {
                 event.status === "Completed"
                   ? "#4caf50"
                   : event.priority === "High"
-                  ? "#f44336"
-                  : event.priority === "Medium"
-                  ? "#4285f4"
-                  : "#ff9800",
+                    ? "#f44336"
+                    : event.priority === "Medium"
+                      ? "#4285f4"
+                      : "#ff9800",
               color: "#fff",
-              borderRadius: "6px",
-              border: "none",
-              padding: "4px",
+              width: "95%",
               opacity: event.status === "Completed" ? 0.9 : 1,
               cursor: "pointer",
             },
