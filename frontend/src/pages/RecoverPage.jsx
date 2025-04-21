@@ -34,11 +34,11 @@ const RecoverPage = () => {
 
     const result = await sendResetOtp(email);
 
-    if (result.success) {
-      setStep(2);
+    if (result && result.success) {
+      setSuccess(true);
       setErrorMessage("");
     } else {
-      setErrorMessage(result.message || "Failed to send OTP");
+      setErrorMessage("Something went wrong. Please try again.");
       setShowError(true);
       setTimeout(() => setShowError(false), 3000);
     }
@@ -47,7 +47,6 @@ const RecoverPage = () => {
   const handleResetPassword = async (e) => {
     e.preventDefault();
 
-    // Client-side validation
     if (!otp || !newPassword || !confirmPassword) {
       setErrorMessage("All fields are required");
       setShowError(true);
@@ -82,7 +81,6 @@ const RecoverPage = () => {
       setSuccess(true);
       setTimeout(() => navigate("/login"), 3000);
     } else {
-      // Show specific error message from backend
       setErrorMessage(result.message || "Invalid OTP or reset failed");
       setShowError(true);
       setTimeout(() => setShowError(false), 3000);
@@ -103,10 +101,19 @@ const RecoverPage = () => {
             <div className={styles.logo}>STUDIFY</div>
           </div>
 
-          {success ? (
-            <div className={styles.successMessage}>
-              Password reset successful! Redirecting to login...
-            </div>
+          {success && step === 1 ? (
+            <>
+              <div className={styles.successMessage}>
+                If this email is registered, an OTP has been sent.
+              </div>
+              <button
+                className={styles.btn}
+                onClick={() => setStep(2)}
+                type="button"
+              >
+                Continue
+              </button>
+            </>
           ) : step === 1 ? (
             <>
               <div
@@ -117,6 +124,7 @@ const RecoverPage = () => {
                 }
               >
                 <div className={styles.icon}>
+                  {/* Email icon */}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -247,7 +255,7 @@ const RecoverPage = () => {
                     </svg>
                   ) : (
                     <br />
-                  )}{" "}
+                  )}
                 </div>
               </div>
 

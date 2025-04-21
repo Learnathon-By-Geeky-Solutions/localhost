@@ -114,42 +114,56 @@ export const getAuthUser = (req, res) => {
 //send password reset otp
 export const sendResetOtp = async (req, res) => {
   const { email } = req.body;
-  if (!email) {
-    return res.json({ success: false, message: "Please provide email" });
+
+  if (!email || !validator.isEmail(email)) {
+    return res.json({
+      success: false,
+      message: "If this email is registered, an OTP has been sent.",
+    });
   }
 
+  const sanitizedEmail = validator.normalizeEmail(email);
+
   try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.json({ success: false, message: "User not found" });
+    const user = await User.findOne({ email: sanitizedEmail });
+
+    if (user) {
+      function generateSecureOTP(length) {
+        const digits = '0123456789';
+        let otp = '';
+        const bytes = crypto.randomBytes(length);
+        for (let i = 0; i < length; i++) {
+          otp += digits[bytes[i] % 10];
+        }
+        return otp;
+      }
+      const otp = generateSecureOTP(6);
+      user.resetOtp = otp;
+      user.resetOtpExpireAt = Date.now() + 10 * 60 * 1000;
+      await user.save();
+
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: user.email,
+        subject: "Password Reset OTP",
+        html: `
+          <p>Hello ${user.fullName || "User"},</p>
+          <p>Your OTP for resetting your password is: <strong>${otp}</strong></p>
+          <p>This code is valid for 10 minutes.</p>
+          <p>If you didn’t request this, you can ignore this email.</p>
+          <p>— Studify Team</p>
+        `,
+      };
+
+      await transporter.sendMail(mailOptions);
     }
-    const otp = Math.floor(100000 + Math.random() * 900000); // Generate a 6-digit OTP
 
-    user.resetOtp = otp;
-    user.resetOtpExpireAt = Date.now() + 10 * 60 * 1000; // OTP expires in 10 minutes
-
-    await user.save();
-
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: user.email,
-      subject: "Password Reset OTP",
-      html: `
-        <p>Hello ${user.fullName || "User"},</p>
-        <p>Your OTP for resetting your password is: <strong>${otp}</strong></p>
-        <p>This code is valid for 10 minutes.</p>
-        <p>If you didn’t request this, you can ignore this email.</p>
-        <p>— Studify Team</p>
-      `,
-    };
-
-    await transporter.sendMail(mailOptions);
     return res.json({
       success: true,
-      message: `OTP sent to ${user.email}`,
+      message: "If this email is registered, an OTP has been sent.",
     });
   } catch (error) {
-    return res.json({ success: false, message: error.message });
+    return res.json({ success: false, message: "Something went wrong" });
   }
 };
 
@@ -160,21 +174,31 @@ export const resetPassword = async (req, res) => {
   if (!email || !otp || !newPassword) {
     return res.json({ success: false, message: "Please provide all fields" });
   }
+
+  if (!validator.isEmail(email)) {
+    return res.json({ success: false, message: "Invalid email format" });
+  }
+
+  if (!validator.isNumeric(otp.toString()) || otp.toString().length !== 6) {
+    return res.json({ success: false, message: "Invalid OTP format" });
+  }
+
+  const sanitizedEmail = validator.normalizeEmail(email);
+
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: sanitizedEmail });
     if (!user) {
       return res.json({ success: false, message: "User not found" });
     }
 
-    if (user.resetOtp === "" || user.resetOtp !== otp) {
+    if (user.resetOtp === "" || user.resetOtp.toString() !== otp.toString()) {
       return res.json({ success: false, message: "Invalid OTP" });
     }
 
-    if (user.resetOtpExpireAt < Date.now) {
+    if (user.resetOtpExpireAt < Date.now()) {
       return res.json({ success: false, message: "OTP expired" });
     }
 
-    // Hash the new password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
 
