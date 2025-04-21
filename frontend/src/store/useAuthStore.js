@@ -91,7 +91,7 @@ export const useAuthStore = create((set) => ({
     set({ isSendingOtp: true, authError: null });
 
     try {
-      const response = await axiosInstance.post("/auth/send-reset-otp", {
+      await axiosInstance.post("/auth/send-reset-otp", {
         email,
       });
       set({ authError: null });

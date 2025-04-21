@@ -49,6 +49,7 @@
 }
 
 .notification{
+    all:unset;
     margin:10px;
     background-color: lightslategray;
     border-radius: 50%;

@@ -71,7 +71,7 @@ export const Topbar = () => {
       <div className={styles.container}>
         <div className={styles.logo} onClick={() => navigate('/dashboard')}>STUDIFY</div>
         <div className={styles.rightSide}>
-          <div className={styles.notification} onClick={handleNotificatonBtn}>
+          <button className={styles.notification} onClick={handleNotificatonBtn}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -87,7 +87,7 @@ export const Topbar = () => {
             {reminderCount > 0 && (
               <span className={styles.badge}>{reminderCount}</span>
             )}
-          </div>
+          </button>
 
           <div className={styles.profile}>
             <svg
