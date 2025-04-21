@@ -115,7 +115,8 @@ const LoginPage = () => {
                 onChange={(e) => setPass(e.target.value)}
               />
             </div>
-            <button className={styles.icon} onClick={toggleSeePass}>
+            <button className={styles.icon } onClick={toggleSeePass} type="button">
+              
               {seePass ? (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -125,6 +126,7 @@ const LoginPage = () => {
                   stroke="currentColor"
                   className="size-6"
                 >
+
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -151,6 +153,7 @@ const LoginPage = () => {
                     d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
                   />
                 </svg>
+                
               )}
             </button>
           </div>
@@ -159,6 +162,7 @@ const LoginPage = () => {
             <button 
               onClick={() => navigate("/recover")}
               className={styles.textClick}
+              type="button"
             >
               Forgot password?
             </button>
@@ -174,6 +178,7 @@ const LoginPage = () => {
           <button
             onClick={() => navigate("/signup")}
             className={styles.textClick}
+            type="button"
           >
             Don't have an account? Sign Up
           </button>

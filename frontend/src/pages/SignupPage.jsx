@@ -105,7 +105,7 @@ const SignupPage = () => {
                                 value={pass} onChange={(e) => setPass(e.target.value)} />
 
                         </div>
-                        <button className={styles.icon} onClick={toggleSeePass}>
+                        <button className={styles.icon} onClick={toggleSeePass} type="button">
                             {
                                 seePass ?
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -135,6 +135,7 @@ const SignupPage = () => {
                     <button
                         onClick={() => navigate('/login')}
                         className={styles.textClick}
+                        type="button"
                     >
                         Already have an account? Login
                     </button>
