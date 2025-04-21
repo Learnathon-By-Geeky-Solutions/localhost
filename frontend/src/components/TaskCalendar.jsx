@@ -67,8 +67,8 @@ const initialTasks = [
     description: "Solve sorting problems",
     courseId: "2",
     chapterId: "3",
-    start: new Date(new Date().setDate(new Date().getDate() + 1)),
-    end: new Date(new Date().setDate(new Date().getDate() + 1)),
+    start: new Date(),
+    end: new Date(new Date().getTime() + 60 * 60 * 1000), // 1-hour even    
     status: "Completed",
     priority: "Medium",
     user: "user1",
@@ -107,12 +107,24 @@ const TaskCalendar = () => {
     return cleanupDragMarks;
   }, [tasks]);
 
+  // const moveTask = ({ event, start, end }) => {
+  //   const updatedTasks = tasks.map((task) =>
+  //     task._id === event._id ? { ...task, start, end } : task
+  //   );
+  //   setTasks(updatedTasks);
+  // };
+
   const moveTask = ({ event, start, end }) => {
+    if (start >= end) {
+      end = new Date(start.getTime() + 60 * 60 * 1000); // Add 1 hour if invalid
+    }
+  
     const updatedTasks = tasks.map((task) =>
       task._id === event._id ? { ...task, start, end } : task
     );
     setTasks(updatedTasks);
   };
+  
 
   const handleSelectSlot = ({ start, end }) => {
     const newTask = {
