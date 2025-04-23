@@ -4,6 +4,7 @@ import styles from "./dashboard.module.css";
 import PieChart from "../components/PieChart.jsx";
 import BarGraph from "../components/BarGraph.jsx";
 import { useAuthStore } from "../store/useAuthStore.js";
+import TodoList from "../components/TaskList.jsx";
 const Dashboard = () => {
   const { user } = useAuthStore();
   const [showWelcome, setShowWelcome] = useState(false);
@@ -25,27 +26,18 @@ const Dashboard = () => {
   }, []);
 
 
+
+
+
   return (
     <div className={styles.container}>
       <div className={styles.leftSide}>
         <div className={styles.calendarPlaceholder}>
           <h3>Calendar View (Coming Soon)</h3>
         </div>
-        <div className={styles.reminders}>
-          <h3>Reminders</h3>
-          <ul>
-            <li>dsds</li>
-            <li>dsds</li>
-            <li>dsds</li>
-            <li>dsds</li>
-            <li>dsds</li>
-            <li>dsds</li>
-            <li>dsds</li>
-            <li>dsds</li>
-            <li>dsds</li>
-            <li>dsds</li>
-
-          </ul>
+        <div className={styles.notes}>
+          <h3>Notes</h3>
+          <textarea/>
         </div>
       </div>
 
@@ -67,20 +59,7 @@ const Dashboard = () => {
         </div>
 
         <div className={styles.todayTasks}>
-          <h3>Today's Tasks</h3>
-          <ul>
-            <li>dsds</li>
-            <li>dsds</li>
-            <li>dsds</li>
-            <li>dsds</li>
-            <li>dsds</li>
-            <li>dsds</li>
-            <li>dsds</li>
-            <li>dsds</li>
-            <li>dsds</li>
-
-
-          </ul>
+          <TodoList/>
         </div>
       </div>
     </div>
