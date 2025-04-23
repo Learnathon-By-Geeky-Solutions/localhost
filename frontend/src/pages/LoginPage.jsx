@@ -27,7 +27,7 @@ const LoginPage = () => {
     await login({ email, password: pass });
 
     if (user) {
-      console.log("Login successful:", data);
+      console.log("Login successful:", user);
       setShowError(false);
       return <Navigate to="/dashboard" />;
     } else {

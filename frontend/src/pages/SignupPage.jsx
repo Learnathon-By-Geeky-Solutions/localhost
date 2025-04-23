@@ -25,10 +25,10 @@ const SignupPage = () => {
             return;
         }
 
-        const result = await signup({ fullName, email, password: pass });
+        const response = await signup({ fullName, email, password: pass });
 
-        if (result && result.success) {
-            console.log("Signup successful:", result);
+        if (response.status === 201) {
+            console.log("Signup successful:", response.data);
             setShowError(false);
             return <Navigate to="/dashboard" />;
         } else {
