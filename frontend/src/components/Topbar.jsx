@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import styles from "./topbar.module.css";
 import { useAuthStore } from "../store/useAuthStore";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+
 import NotificationPanel from "./NotificationPanel";
 
 export const Topbar = () => {
@@ -69,9 +71,25 @@ export const Topbar = () => {
   return (
     <>
       <div className={styles.container}>
-        <div className={styles.logo} onClick={() => navigate('/dashboard')}>STUDIFY</div>
+        <div
+          className={styles.logo}
+          role="button"
+          tabIndex={0}
+          onClick={() => navigate("/dashboard")}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              navigate("/dashboard");
+            }
+          }}
+        >
+          STUDIFY
+        </div>
+
         <div className={styles.rightSide}>
-          <button className={styles.notification} onClick={handleNotificatonBtn}>
+          <button
+            className={styles.notification}
+            onClick={handleNotificatonBtn}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
