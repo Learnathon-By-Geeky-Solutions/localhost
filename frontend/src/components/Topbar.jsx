@@ -71,6 +71,7 @@ export const Topbar = () => {
       <div className={styles.container}>
         <button
           className={styles.logo}
+          type="button"
           onClick={() => navigate("/dashboard")}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
