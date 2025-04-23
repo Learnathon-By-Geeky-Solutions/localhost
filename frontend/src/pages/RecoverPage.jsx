@@ -134,6 +134,25 @@ const RecoverPage = () => {
     </>
   );
 
+  // ✅ Extracted logic
+  let formContent;
+  if (success && step === 1) {
+    formContent = (
+      <>
+        <div className={styles.successMessage}>
+          If this email is registered, an OTP has been sent.
+        </div>
+        <button className={styles.btn} onClick={() => setStep(2)} type="button">
+          Continue
+        </button>
+      </>
+    );
+  } else if (step === 1) {
+    formContent = renderEmailForm();
+  } else {
+    formContent = renderResetForm();
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.leftSide}>
@@ -145,24 +164,7 @@ const RecoverPage = () => {
             <h2>Reset Password</h2>
             <div className={styles.logo}>STUDIFY</div>
           </div>
-          {success && step === 1 ? (
-            <>
-              <div className={styles.successMessage}>
-                If this email is registered, an OTP has been sent.
-              </div>
-              <button
-                className={styles.btn}
-                onClick={() => setStep(2)}
-                type="button"
-              >
-                Continue
-              </button>
-            </>
-          ) : step === 1 ? (
-            renderEmailForm()
-          ) : (
-            renderResetForm()
-          )}
+          {formContent}
         </form>
       </div>
     </div>
@@ -196,7 +198,6 @@ const InputField = ({
   </div>
 );
 
-// ✅ Add PropTypes validation
 InputField.propTypes = {
   icon: PropTypes.node,
   placeholder: PropTypes.string.isRequired,
@@ -251,7 +252,7 @@ const ToggleSeePassIcon = ({ seePass, onClick }) =>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
-        d="M3.98 8.223A10.477..."
+        d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"
       />
     </svg>
   ) : (
