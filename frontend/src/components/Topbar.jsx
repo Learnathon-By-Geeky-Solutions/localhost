@@ -69,19 +69,18 @@ export const Topbar = () => {
   return (
     <>
       <div className={styles.container}>
-        <div
+        <button
           className={styles.logo}
-          role="button"
-          tabIndex={0}
           onClick={() => navigate("/dashboard")}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
               navigate("/dashboard");
             }
           }}
         >
           STUDIFY
-        </div>
+        </button>
 
         <div className={styles.rightSide}>
           <button

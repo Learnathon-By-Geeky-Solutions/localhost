@@ -214,6 +214,8 @@ const EmailIcon = () => (
     fill="black"
     stroke="white"
     strokeWidth="1.5"
+    role="img"
+    aria-label="Email"
   >
     <path
       strokeLinecap="round"
@@ -230,6 +232,8 @@ const ConfirmPassIcon = () => (
     fill="black"
     stroke="white"
     strokeWidth="1"
+    role="img"
+    aria-label="Confirm Password"
   >
     <path
       strokeLinecap="round"
