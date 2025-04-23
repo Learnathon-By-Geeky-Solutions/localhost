@@ -37,7 +37,7 @@ const Dashboard = () => {
         </div>
         <div className={styles.notes}>
           <h3>Notes</h3>
-          <textarea/>
+          <textarea spellCheck={false}/>
         </div>
       </div>
 

@@ -13,7 +13,7 @@ export default function TaskList() {
   useEffect(() => {
     // Fetch tasks
     axiosInstance.get("/tasks").then((res) => setTasks(res.data));
-    
+
     // Fetch courses for the dropdown
     axiosInstance.get("/courses").then((res) => setCourses(res.data));
   }, []);
@@ -22,7 +22,7 @@ export default function TaskList() {
     e.stopPropagation(); // Prevent opening modal
     const task = tasks.find((t) => t._id === taskId);
     const updated = { ...task, status: task.status === "Completed" ? "Incomplete" : "Completed" };
-    
+
     await axiosInstance.put(`/tasks/${taskId}`, updated);
     setTasks(tasks.map((t) => (t._id === taskId ? updated : t)));
   };
@@ -54,12 +54,12 @@ export default function TaskList() {
       setTasks(tasks.filter(t => t._id !== taskData._id));
       return;
     }
-    
+
     // Create new task
     if (!taskData._id) {
       const res = await axiosInstance.post("/tasks", taskData);
       setTasks([...tasks, res.data]);
-    } 
+    }
     // Update existing task
     else {
       await axiosInstance.put(`/tasks/${taskData._id}`, taskData);
@@ -68,7 +68,7 @@ export default function TaskList() {
   };
 
   return (
-    <div className={styles.taskContainer}>
+    <div className={styles.container}>
       <div className={styles.taskList}>
         <div className={styles.taskHeader}>
           <h2>Tasks</h2>
@@ -76,7 +76,7 @@ export default function TaskList() {
             Add Task
           </button>
         </div>
-        
+
         {tasks.length === 0 ? (
           <div className={styles.noTasks}>No tasks yet. Create one to get started!</div>
         ) : (
@@ -92,11 +92,11 @@ export default function TaskList() {
                 onChange={(e) => handleStatusToggle(task._id, e)}
                 onClick={(e) => e.stopPropagation()}
               />
-              
+
               <div className={styles.taskContent}>
                 <div className={styles.taskTitleRow}>
                   <h4>{task.title}</h4>
-                  <div 
+                  <div
                     className={styles.priorityIndicator}
                     style={{
                       backgroundColor:
@@ -108,9 +108,9 @@ export default function TaskList() {
                     }}
                   />
                 </div>
-                
+
                 <p className={styles.taskDescription}>{task.description}</p>
-                
+
                 {task.start && task.end && (
                   <div className={styles.taskDates}>
                     <span>{moment(task.start).format("MMM D, h:mm A")}</span>
@@ -118,7 +118,7 @@ export default function TaskList() {
                     <span>{moment(task.end).format("MMM D, h:mm A")}</span>
                   </div>
                 )}
-                
+
                 {task.courseId && (
                   <div className={styles.taskCourse}>
                     {courses.find(c => c._id === task.courseId)?.title}
