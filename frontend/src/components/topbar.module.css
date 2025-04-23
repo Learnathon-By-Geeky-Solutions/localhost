@@ -23,16 +23,6 @@
   outline: none;
 }
 
-/* .logo:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-  text-decoration: underline;
-} */
-
-/* .logo:focus {
-  outline: 2px dashed white;
-  outline-offset: 4px;
-} */
-
 .rightSide {
   height: 100%;
   display: flex;
