@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import Reminder from "../models/reminder.model.js";
 import Task from "../models/task.model.js";
-import User from "../models/user.model.js";
 
 // Create a new reminder
 export const createReminder = async (req, res) => {
@@ -90,6 +89,7 @@ export const getReminderById = async (req, res) => {
 
     res.status(200).json(reminder);
   } catch (error) {
+    console.log("Error fetching reminder:", error);
     res.status(500).json({ error: "Server error" });
   }
 };
@@ -163,30 +163,5 @@ export const deleteReminder = async (req, res) => {
   } catch (error) {
     console.log("Error deleting reminder:", error);
     res.status(500).json({ error: "Server error" });
-  }
-};
-
-// Subscribe user to push notifications
-export const subscribeUser = async (req, res) => {
-  try {
-    const { subscription } = req.body;
-    const userId = req.user.id;
-
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ message: "Invalid User ID" });
-    }
-
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    user.subscription = subscription;
-    await user.save();
-
-    res.status(200).json({ message: "Subscription saved successfully" });
-  } catch (error) {
-    console.error("Error saving subscription:", error);
-    res.status(500).json({ message: "Internal server error" });
   }
 };

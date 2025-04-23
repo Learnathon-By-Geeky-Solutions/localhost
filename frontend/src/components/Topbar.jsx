@@ -69,9 +69,25 @@ export const Topbar = () => {
   return (
     <>
       <div className={styles.container}>
-        <div className={styles.logo} onClick={() => navigate('/dashboard')}>STUDIFY</div>
+        <button
+          className={styles.logo}
+          type="button"
+          onClick={() => navigate("/dashboard")}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              navigate("/dashboard");
+            }
+          }}
+        >
+          STUDIFY
+        </button>
+
         <div className={styles.rightSide}>
-          <button className={styles.notification} onClick={handleNotificatonBtn}>
+          <button
+            className={styles.notification}
+            onClick={handleNotificatonBtn}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
