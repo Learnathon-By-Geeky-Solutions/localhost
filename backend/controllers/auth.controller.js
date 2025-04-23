@@ -3,7 +3,7 @@ import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import validator from "validator"; // ✅ Importing validator
 import transporter from "../services/nodemailer.service.js";
-import crypto from "crypto";
+import crypto from "node:crypto";
 
 export const signup = async (req, res) => {
   const { fullName, email, password } = req.body;

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import styles from "./RecoverPage.module.css";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
@@ -195,6 +196,17 @@ const InputField = ({
   </div>
 );
 
+// ✅ Add PropTypes validation
+InputField.propTypes = {
+  icon: PropTypes.node,
+  placeholder: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  error: PropTypes.bool,
+  rightIcon: PropTypes.node,
+};
+
 const EmailIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -245,5 +257,10 @@ const ToggleSeePassIcon = ({ seePass, onClick }) =>
   ) : (
     <br />
   );
+
+ToggleSeePassIcon.propTypes = {
+  seePass: PropTypes.bool.isRequired,
+  onClick: PropTypes.func.isRequired,
+};
 
 export default RecoverPage;
