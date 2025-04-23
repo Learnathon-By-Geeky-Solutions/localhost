@@ -11,7 +11,9 @@ export const createReminder = async (req, res) => {
     const userId = req.user.id;
 
     if (!taskId || offset === undefined) {
-      return res.status(400).json({ error: "Task ID and offset time are required" });
+      return res
+        .status(400)
+        .json({ error: "Task ID and offset time are required" });
     }
 
     if (!mongoose.Types.ObjectId.isValid(taskId)) {
@@ -20,7 +22,9 @@ export const createReminder = async (req, res) => {
 
     // Validate that the offset is a positive number
     if (typeof offset !== "number" || offset <= 0) {
-      return res.status(400).json({ error: "Offset must be a positive number" });
+      return res
+        .status(400)
+        .json({ error: "Offset must be a positive number" });
     }
 
     const task = await Task.findById(taskId);
@@ -37,7 +41,7 @@ export const createReminder = async (req, res) => {
       taskId,
       userId,
       offset,
-      notificationTime: new Date(task.startTime - offset * 60 * 1000)  // Convert offset to milliseconds
+      notificationTime: new Date(task.startTime - offset * 60 * 1000), // Convert offset to milliseconds
     });
 
     await newReminder.save();
@@ -53,7 +57,6 @@ export const createReminder = async (req, res) => {
   }
 };
 
-
 // Get all reminders
 // Get all reminders
 export const getReminders = async (req, res) => {
@@ -65,10 +68,10 @@ export const getReminders = async (req, res) => {
     });
     res.status(200).json(reminders);
   } catch (error) {
+    console.log("Error fetching reminders:", error);
     res.status(500).json({ error: "Server error" });
   }
 };
-
 
 // Get a specific reminder by ID
 export const getReminderById = async (req, res) => {
@@ -81,6 +84,7 @@ export const getReminderById = async (req, res) => {
 
     const reminder = await Reminder.findById(reminderId);
     if (!reminder) {
+      console.log("Reminder not found", error);
       return res.status(404).json({ error: "Reminder not found" });
     }
 
@@ -90,7 +94,6 @@ export const getReminderById = async (req, res) => {
   }
 };
 
-// Update a reminder
 // Update a reminder
 export const updateReminder = async (req, res) => {
   try {
@@ -140,7 +143,6 @@ export const updateReminder = async (req, res) => {
   }
 };
 
-
 // Delete a reminder
 export const deleteReminder = async (req, res) => {
   try {
@@ -159,6 +161,7 @@ export const deleteReminder = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Reminder deleted successfully" });
   } catch (error) {
+    console.log("Error deleting reminder:", error);
     res.status(500).json({ error: "Server error" });
   }
 };

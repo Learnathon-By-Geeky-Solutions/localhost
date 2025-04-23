@@ -129,8 +129,8 @@ export const sendResetOtp = async (req, res) => {
 
     if (user) {
       function generateSecureOTP(length) {
-        const digits = '0123456789';
-        let otp = '';
+        const digits = "0123456789";
+        let otp = "";
         const bytes = crypto.randomBytes(length);
         for (let i = 0; i < length; i++) {
           otp += digits[bytes[i] % 10];
@@ -163,6 +163,7 @@ export const sendResetOtp = async (req, res) => {
       message: "If this email is registered, an OTP has been sent.",
     });
   } catch (error) {
+    console.log("Error in sendResetOtp:", error);
     return res.json({ success: false, message: "Something went wrong" });
   }
 };
@@ -213,6 +214,7 @@ export const resetPassword = async (req, res) => {
       message: "Password reset successfully",
     });
   } catch (error) {
+    console.log("Error in resetPassword:", error);
     return res.json({ success: false, message: error.message });
   }
 };
