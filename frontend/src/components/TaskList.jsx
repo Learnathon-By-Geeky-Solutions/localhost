@@ -1,31 +1,83 @@
+import React from 'react'
 import { useState, useEffect } from "react";
 import { axiosInstance } from "../lib/axios";
 import moment from "moment";
 import TaskDetailModal from "./TaskDetailModal";
 import styles from "./taskList.module.css";
 
-export default function TaskList() {
+
+const TaskList = () => {
   const [tasks, setTasks] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [courses, setCourses] = useState([]);
 
   useEffect(() => {
-    // Fetch tasks
-    axiosInstance.get("/tasks").then((res) => setTasks(res.data));
+    const fetchTasks = async () => {
+      try {
+        const res = await axiosInstance.get("/tasks", );
+        
+        if (res.status === 200) {
+          console.log(res.data);
+          setTasks(res.data);
+        } else {
+          console.error("Failed to fetch tasks:", res.status);
+        }
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
+    };
 
-    // Fetch courses for the dropdown
-    axiosInstance.get("/courses").then((res) => setCourses(res.data));
+    const fetchCourses = async () => {
+      try {
+        const res = await axiosInstance.get("/courses");
+        if (res.status === 200) {
+          setCourses(res.data);
+        } else {
+          console.error("Failed to fetch courses:", res.status);
+        }
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
+
+    fetchTasks();
+    fetchCourses();
   }, []);
 
-  const handleStatusToggle = async (taskId, e) => {
-    e.stopPropagation(); // Prevent opening modal
-    const task = tasks.find((t) => t._id === taskId);
-    const updated = { ...task, status: task.status === "Completed" ? "Incomplete" : "Completed" };
 
-    await axiosInstance.put(`/tasks/${taskId}`, updated);
-    setTasks(tasks.map((t) => (t._id === taskId ? updated : t)));
+  const handleStatusToggle = async (taskId, e) => {
+    try {
+      e.stopPropagation(); // Prevent modal from opening
+
+      // Find the task to update
+      const task = tasks.find((t) => t._id === taskId);
+      if (!task) {
+        console.error("Task not found");
+        return;
+      }
+
+      // Prepare updated task object
+      const newStatus = task.status === "Completed" ? "Incomplete" : "Completed";
+      const updatedTask = { ...task, status: newStatus };
+
+      // Update task on the server
+      const res = await axiosInstance.put(`/tasks/${taskId}`, updatedTask);
+      if (res.status !== 200) {
+        console.error("Failed to update task:", res);
+        return;
+      }
+
+      // Update local state
+      setTasks((prevTasks) =>
+        prevTasks.map((t) => (t._id === taskId ? updatedTask : t))
+      );
+
+    } catch (error) {
+      console.error("Error toggling task status:", error.message);
+    }
   };
+
 
   const openNewTaskModal = () => {
     setSelectedTask(null);
@@ -48,22 +100,27 @@ export default function TaskList() {
   };
 
   const handleSaveTask = async (taskData) => {
-    // Handle delete
-    if (taskData._delete) {
-      await axiosInstance.delete(`/tasks/${taskData._id}`);
-      setTasks(tasks.filter(t => t._id !== taskData._id));
-      return;
-    }
+    try {
+      // Handle delete
+      if (taskData._delete) {
+        await axiosInstance.delete(`/tasks/${taskData._id}`);
+        setTasks(tasks.filter(t => t._id !== taskData._id));
+        return;
+      }
 
-    // Create new task
-    if (!taskData._id) {
-      const res = await axiosInstance.post("/tasks", taskData);
-      setTasks([...tasks, res.data]);
-    }
-    // Update existing task
-    else {
-      await axiosInstance.put(`/tasks/${taskData._id}`, taskData);
-      setTasks(tasks.map((t) => (t._id === taskData._id ? taskData : t)));
+      // Create new task
+      if (!taskData._id) {
+        const res = await axiosInstance.post("/tasks", taskData);
+        setTasks([...tasks, res.data]);
+      }
+      // Update existing task
+      else {
+        await axiosInstance.put(`/tasks/${taskData._id}`, taskData);
+        setTasks(tasks.map((t) => (t._id === taskData._id ? taskData : t)));
+      }
+    } catch (error) {
+      console.error("Failed to save task:", error);
+      // Consider adding error state and user feedback
     }
   };
 
@@ -72,7 +129,7 @@ export default function TaskList() {
       <div className={styles.taskList}>
         <div className={styles.taskHeader}>
           <h2>Tasks</h2>
-          <button className={styles.addTaskButton} onClick={openNewTaskModal}>
+          <button type='button' className={styles.addTaskButton} onClick={openNewTaskModal}>
             Add Task
           </button>
         </div>
@@ -83,8 +140,16 @@ export default function TaskList() {
           tasks.map((task) => (
             <div
               key={task._id}
-              className={`taskItem ${task.status === "Completed" ? "completed" : ""}`}
+              className={`${styles.taskItem} ${task.status === "Completed" ? styles.completed : ""}`}
               onClick={() => openEditTaskModal(task)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  openEditTaskModal(task);
+                }
+              }}
+              tabIndex={0}
+              role="button"
+              aria-label={`Edit task: ${task.title}`}
             >
               <input
                 type="checkbox"
@@ -121,8 +186,9 @@ export default function TaskList() {
 
                 {task.courseId && (
                   <div className={styles.taskCourse}>
-                    {courses.find(c => c._id === task.courseId)?.title}
+                    {courses.find(c => c._id === task.courseId)?.title || 'Unknown Course'}
                     {task.chapterId && ` > ${getChaptersForCourse(task.courseId).find(ch => ch._id === task.chapterId)?.title}`}
+                    {task.chapterId && ` > ${getChaptersForCourse(task.courseId).find(ch => ch._id === task.chapterId)?.title || 'Unknown Chapter'}`}
                   </div>
                 )}
               </div>
@@ -142,3 +208,7 @@ export default function TaskList() {
     </div>
   );
 }
+
+
+
+export default TaskList

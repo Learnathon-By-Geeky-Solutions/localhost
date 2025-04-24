@@ -32,7 +32,7 @@ const Navbar = () => {
   };
 
   return (
-    <button
+    <div
       className={styles.container}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -163,7 +163,7 @@ const Navbar = () => {
         </div>
         {isHovered && <div className={styles.menuName}>LOGOUT</div>}
       </button>
-    </button>
+    </div>
   );
 };
 

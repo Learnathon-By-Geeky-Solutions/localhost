@@ -1,29 +1,41 @@
+import React from "react";
 import { useState, useEffect } from "react";
-import moment from "moment";
+import { format } from "date-fns";
 import { Check, X, Save, Trash } from "lucide-react";
 import styles from "./taskDetailModal.module.css";
 
-function TaskDetailModal({
+
+
+const PRIORITY_COLORS = {
+    High: "#f44336",
+    Medium: "#4285f4",
+    Low: "#ff9800"
+};
+
+const getInitialTaskState = (taskObj = null) => ({
+    title: "",
+    description: "",
+    priority: "Medium",
+    status: "Incomplete",
+    start: new Date(),
+    end: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    courseId: null,
+    chapterId: null,
+    ...(taskObj || {})
+});
+const TaskDetailModal = ({
     isOpen,
     closeModal,
     task = null,
     onSave,
     courses = [],
     getChaptersForCourse = () => []
-}) {
+}) => {
+
     const isNewTask = !task?._id;
     const [warning, setWarning] = useState("");
-    const [taskData, setTaskData] = useState({
-        title: "",
-        description: "",
-        priority: "Medium",
-        status: "Incomplete",
-        start: new Date(),
-        end: new Date(Date.now() + 24 * 60 * 60 * 1000), // Default due date: tomorrow
-        courseId: null,
-        chapterId: null,
-        ...task
-    });
+    const [taskData, setTaskData] = useState(() => getInitialTaskState(task));
+
 
     useEffect(() => {
         // Reset form when task changes
@@ -84,7 +96,7 @@ function TaskDetailModal({
                     <div className={styles.timeLabel}>Start:</div>
                     <input
                         type="datetime-local"
-                        value={moment(taskData.start).format("YYYY-MM-DDTHH:mm")}
+                        value={format(new Date(taskData.start), "yyyy-MM-dd'T'HH:mm")}
                         onChange={(e) =>
                             setTaskData({
                                 ...taskData,
@@ -96,7 +108,7 @@ function TaskDetailModal({
                     <div className={styles.timeLabel}>Due:</div>
                     <input
                         type="datetime-local"
-                        value={moment(taskData.end).format("YYYY-MM-DDTHH:mm")}
+                        value={format(new Date(taskData.end), "yyyy-MM-dd'T'HH:mm")}
                         onChange={(e) =>
                             setTaskData({
                                 ...taskData,
@@ -161,12 +173,7 @@ function TaskDetailModal({
                     <div
                         className={styles.statusDot}
                         style={{
-                            backgroundColor:
-                                taskData.priority === "High"
-                                    ? "#f44336"
-                                    : taskData.priority === "Medium"
-                                        ? "#4285f4"
-                                        : "#ff9800",
+                            backgroundColor: PRIORITY_COLORS[taskData.priority] || PRIORITY_COLORS.Medium
                         }}
                     />
                     <select
@@ -187,6 +194,7 @@ function TaskDetailModal({
                         taskData.status === "Completed" ? (
                             <button
                                 className={styles.actionButton}
+                                type="button"
                                 onClick={handleMarkNotDone}
                             >
                                 <X size={16} />
@@ -195,6 +203,7 @@ function TaskDetailModal({
                         ) : (
                             <button
                                 className={styles.actionButton}
+                                type="button"
                                 onClick={handleMarkDone}
                             >
                                 <Check size={16} />
@@ -205,6 +214,7 @@ function TaskDetailModal({
 
                     <button
                         className={styles.actionButton}
+                        type="button"
                         onClick={handleSaveTask}
                     >
                         <Save size={16} />
@@ -214,6 +224,7 @@ function TaskDetailModal({
                     {!isNewTask && (
                         <button
                             className={styles.actionButton}
+                            type="button"
                             onClick={() => onSave({ ...taskData, _delete: true })}
                         >
                             <Trash size={16} />
@@ -222,7 +233,8 @@ function TaskDetailModal({
                     )}
 
                     <button
-                        className={`{$styles.actionButton} {$styles.closeButton}`}
+                        className={`${styles.actionButton} ${styles.closeButton}`}
+                        type="button"
                         onClick={() => {
                             closeModal();
                             setWarning("");
