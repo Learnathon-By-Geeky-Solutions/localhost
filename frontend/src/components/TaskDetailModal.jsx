@@ -1,5 +1,4 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { Check, X, Save, Trash } from "lucide-react";
 import styles from "./taskDetailModal.module.css";
@@ -67,6 +66,12 @@ const TaskDetailModal = ({
             return;
         }
 
+        if (new Date(taskData.end) < new Date(taskData.start)) {
+            setWarning("Due date cannot be earlier than start date");
+            return;
+        }
+
+
         onSave(taskData);
         closeModal();
     };
@@ -126,6 +131,7 @@ const TaskDetailModal = ({
                         setTaskData({ ...taskData, description: e.target.value })
                     }
                     placeholder="Add description"
+                    maxLength={500}
                 />
 
                 <div className={styles.courseSection}>

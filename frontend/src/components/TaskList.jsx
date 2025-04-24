@@ -1,5 +1,4 @@
-import React from 'react'
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { axiosInstance } from "../lib/axios";
 import moment from "moment";
 import TaskDetailModal from "./TaskDetailModal";
@@ -15,10 +14,9 @@ const TaskList = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const res = await axiosInstance.get("/tasks", );
-        
+        const res = await axiosInstance.get("/tasks",);
+
         if (res.status === 200) {
-          console.log(res.data);
           setTasks(res.data);
         } else {
           console.error("Failed to fetch tasks:", res.status);
@@ -138,17 +136,11 @@ const TaskList = () => {
           <div className={styles.noTasks}>No tasks yet. Create one to get started!</div>
         ) : (
           tasks.map((task) => (
-            <div
+            <button
+              type="button"
               key={task._id}
               className={`${styles.taskItem} ${task.status === "Completed" ? styles.completed : ""}`}
               onClick={() => openEditTaskModal(task)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  openEditTaskModal(task);
-                }
-              }}
-              tabIndex={0}
-              role="button"
               aria-label={`Edit task: ${task.title}`}
             >
               <input
@@ -187,12 +179,11 @@ const TaskList = () => {
                 {task.courseId && (
                   <div className={styles.taskCourse}>
                     {courses.find(c => c._id === task.courseId)?.title || 'Unknown Course'}
-                    {task.chapterId && ` > ${getChaptersForCourse(task.courseId).find(ch => ch._id === task.chapterId)?.title}`}
                     {task.chapterId && ` > ${getChaptersForCourse(task.courseId).find(ch => ch._id === task.chapterId)?.title || 'Unknown Chapter'}`}
                   </div>
                 )}
               </div>
-            </div>
+            </button>
           ))
         )}
       </div>
