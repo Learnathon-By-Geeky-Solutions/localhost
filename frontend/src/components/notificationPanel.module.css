@@ -56,15 +56,16 @@
   padding: 12px;
   border-radius: 6px;
   margin-bottom: 8px;
-  background-color: #f7f7f7; /* Very Light Gray from palette */
+  background-color: #f9f6f6; /* Very Light Gray from palette */
   border-left: 3px solid #6c5b7b; /* Soft Purple from palette */
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Shadow from palette */
   transition: background-color 0.2s;
 }
 
 .container li:hover {
-  background-color: #ffb6b9; /* Soft Light Gray from palette */
-  border-left: 3px solid #ffb6b9; /* Soft Peach from palette */
+  background-color: #f7c0c1; /* Soft Light Gray from palette */
+  border-left: 3px solid #fd9ea1; /* Soft Peach from palette */
+  transform: translateX(2px);
 }
 
 .taskTitle {
@@ -75,7 +76,7 @@
 
 .timestamp {
   font-size: 12px;
-  color: #979ba5; /* Light Gray Text from palette */
+  color: #717274; /* Light Gray Text from palette */
 }
 
 /* Loading animation */
