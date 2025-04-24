@@ -25,38 +25,31 @@ const TaskCalendar = () => {
 
   // Fetch all required data on component mount
   useEffect(() => {
-    const fetchAllData = async () => {
+    const fetchAllTasks = async () => {
       setLoading(true);
 
       try {
-        // Fetch tasks first
-        const tasksResponse = await axiosInstance.get("/tasks");
+        const response = await axiosInstance.get("/tasks");
 
-        // Transform task data to match calendar format
-        const transformedTasks = tasksResponse.data.map(task => ({
-          ...task,
-          start: new Date(task.startTime || Date.now()),
-          end: new Date(task.endTime || Date.now() + 3600000), // Add 1 hour as default
-        }));
+        
+        setTasks(response.data);
+        // try {
+        //   const coursesResponse = await axiosInstance.get("/courses");
+        //   const courses = coursesResponse.data;
+        //   setCourses(courses);
 
-        setTasks(transformedTasks);
-        try {
-          const coursesResponse = await axiosInstance.get("/courses");
-          const courses = coursesResponse.data;
-          setCourses(courses);
-
-          if (courses.length > 0) {
-            const courseId = courses[0]._id; // or whichever course you want
-            const chapterResponse = await axiosInstance.get(`/chapters/all/${courseId}`);
-            setChapters(chapterResponse.data);
-          } else {
-            setChapters([]);
-          }
-        } catch (err) {
-          console.warn("Error fetching courses or chapters:", err);
-          setCourses([]);
-          setChapters([]);
-        }
+        //   if (courses.length > 0) {
+        //     const courseId = courses[0]._id; // or whichever course you want
+        //     const chapterResponse = await axiosInstance.get(`/chapters/all/${courseId}`);
+        //     setChapters(chapterResponse.data);
+        //   } else {
+        //     setChapters([]);
+        //   }
+        // } catch (err) {
+        //   console.warn("Error fetching courses or chapters:", err);
+        //   setCourses([]);
+        //   setChapters([]);
+        // }
 
 
       } catch (err) {
@@ -67,7 +60,7 @@ const TaskCalendar = () => {
       }
     };
 
-    fetchAllData();
+    fetchAllTasks();
   }, []);
 
   useEffect(() => {

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import moment from "moment";
-import styles from './taskDetailModal.module.css'
+import styles from './taskDetailModal.module.css';
 import { Check, Save, Trash, X, Loader } from "lucide-react";
-
+import { useTaskStore } from '../../store/useTaskStore';
 
 const now = new Date();
 const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
@@ -18,11 +18,11 @@ const newTask = {
   chapterId: null,
 };
 
-
-const TaskDetailModal = (givenTask = null, givenTime = null) => {
-  
+const TaskDetailModal = ({ givenTask = null, givenTime = null, popupPosition = null, onClose = () => {} }) => {
   const [task, setTask] = useState(givenTask ? givenTask : newTask);
   const [warning, setWarning] = useState("");
+
+  const { createTask, updateTask, deleteTask } = useTaskStore();
 
   useEffect(() => {
     if (!givenTask && givenTime) {
@@ -34,15 +34,34 @@ const TaskDetailModal = (givenTask = null, givenTime = null) => {
     }
   }, [givenTask, givenTime]);
 
+  const handleSave = () => {
+    if (!task.title.trim()) {
+      setWarning("Title is required!");
+      return;
+    }
 
-  const popupPosition = { x: 100, y: 100 };
+    if (givenTask) {
+      // updateTask(task); // editing existing task
+    } else {
+      createTask({ ...task, _id: crypto.randomUUID() }); // creating new task
+    }
+
+    onClose();
+  };
+
+  const handleDelete = () => {
+    if (givenTask?._id) {
+      deleteTask(givenTask._id);
+    }
+    onClose();
+  };
 
   return (
     <div className={styles.modalOverlay}>
-
       <div
         className={styles.container}
-        style={{
+        style={popupPosition && {
+          position: 'absolute',
           left: `${popupPosition.x}px`,
           top: `${popupPosition.y}px`,
         }}
@@ -50,27 +69,26 @@ const TaskDetailModal = (givenTask = null, givenTime = null) => {
         <div className={styles.header}>
           <input
             className={styles.titleInput}
-            // value={task.title}
-            // onChange={(e) => {
-            //   setTask({ ...task, title: e.target.value });
-            //   setWarning("");
-            // }}
-            placeholder={(!task) ? "Add title" : "Task title"}
+            value={task.title}
+            onChange={(e) => {
+              setTask({ ...task, title: e.target.value });
+              setWarning("");
+            }}
+            placeholder="Task title"
           />
         </div>
+
         {warning && (
           <p style={{ color: "red", marginBottom: "10px" }}>{warning}</p>
         )}
+
         <div className={styles.popupTime}>
           <div className={styles.timeLabel}>Start:</div>
           <input
             type="datetime-local"
             value={moment(task.startTime).format("YYYY-MM-DDTHH:mm")}
             onChange={(e) =>
-              setTask({
-                ...task,
-                startTime: new Date(e.target.value),
-              })
+              setTask({ ...task, startTime: new Date(e.target.value).toISOString() })
             }
             className={styles.dateTimeInput}
           />
@@ -79,14 +97,12 @@ const TaskDetailModal = (givenTask = null, givenTime = null) => {
             type="datetime-local"
             value={moment(task.endTime).format("YYYY-MM-DDTHH:mm")}
             onChange={(e) =>
-              setTask({
-                ...task,
-                endTime: new Date(e.target.value),
-              })
+              setTask({ ...task, endTime: new Date(e.target.value).toISOString() })
             }
             className={styles.dateTimeInput}
           />
         </div>
+
         <textarea
           className={styles.descriptionInput}
           value={task.description || ""}
@@ -95,45 +111,8 @@ const TaskDetailModal = (givenTask = null, givenTime = null) => {
           }
           placeholder="Add description"
         />
-        <div className={styles.courseSection}>
-          <select
-            className={styles.courseSelect}
-            value={task.courseId || ""}
-            onChange={(e) =>
-              setTask({
-                ...task,
-                courseId: e.target.value || null,
-                chapterId: null,
-              })
-            }
-          >
-            <option value="">Select Course (Optional)</option>
-            {/* {courses.map((course) => (
-              <option key={course._id} value={course._id}>
-                {course.title}
-              </option>
-            ))} */}
-          </select>
-          {task.courseId && (
-            <select
-              className={styles.courseSelect}
-            // value={task.chapterId || ""}
-            // onChange={(e) =>
-            //   setTask({
-            //     ...task,
-            //     chapterId: e.target.value || null,
-            //   })
-            // }
-            >
-              <option value="">Select Chapter (Optional)</option>
-              {/* {getChaptersForCourse(task.courseId).map((chapter) => (
-                <option key={chapter._id} value={chapter._id}>
-                  {chapter.title}
-                </option>
-              ))} */}
-            </select>
-          )}
-        </div>
+
+        {/* Course / Chapter selection logic can be added later if needed */}
 
         <div className={styles.popUpPriority}>
           <div
@@ -149,10 +128,10 @@ const TaskDetailModal = (givenTask = null, givenTime = null) => {
           />
           <select
             className={styles.courseSelect}
-          // value={task.priority || "Medium"}
-          // onChange={(e) =>
-          //   setTask({ ...task, priority: e.target.value })
-          // }
+            value={task.priority || "Medium"}
+            onChange={(e) =>
+              setTask({ ...task, priority: e.target.value })
+            }
           >
             <option value="Low">Low Priority</option>
             <option value="Medium">Medium Priority</option>
@@ -161,45 +140,35 @@ const TaskDetailModal = (givenTask = null, givenTime = null) => {
         </div>
 
         <div className={styles.popupActions}>
-          {!(!task) && (
-            task.status === "Completed" ? (
-              <button
-                className={styles.actionButton}
-              // onClick={handleMarkNotDone}
-              >
-                <X size={16} />
-                <span>Not Done</span>
-              </button>
-            ) : (
-              <button
-                className={styles.actionButton}
-              // onClick={handleMarkDone}
-              >
-                <Check size={16} />
-                <span>Done</span>
-              </button>
-            )
-          )}
-          <button
+          <select
             className={styles.actionButton}
-          // onClick={handleAction}
+            value={task.status}
+            onChange={(e) => {
+              const newStatus = e.target.value;
+              setTask({ ...task, status: newStatus });
+            }}
           >
+            <option value="Incomplete">Incomplete</option>
+            <option value="Pending">Pending</option>
+            <option value="Completed">Completed</option>
+          </select>
+
+          <button className={styles.actionButton} onClick={handleSave}>
             <Save size={16} />
             <span>Save</span>
           </button>
-          {!(!task) && (
-            <button
-              className={styles.actionButton}
-            // onClick={handleDelete}
-            >
+
+          {givenTask && (
+            <button className={styles.actionButton} onClick={handleDelete}>
               <Trash size={16} />
               <span>Delete</span>
             </button>
           )}
+
           <button
             className={`${styles.actionButton} ${styles.closeButton}`}
             onClick={() => {
-              // closePopup();
+              onClose();
               setWarning("");
             }}
           >

@@ -188,14 +188,14 @@ const TaskList = () => {
         )}
       </div>
 
-      <TaskDetailModal
+      {/* <TaskDetailModal
         isOpen={isModalOpen}
         closeModal={closeModal}
         task={selectedTask}
         onSave={handleSaveTask}
         courses={courses}
         getChaptersForCourse={getChaptersForCourse}
-      />
+      /> */}
     </div>
   );
 }
