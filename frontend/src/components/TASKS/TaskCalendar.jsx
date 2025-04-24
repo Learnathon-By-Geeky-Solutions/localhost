@@ -6,9 +6,8 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import { Check, Save, Trash, X, Loader } from "lucide-react";
 import styles from "./taskCalendar.module.css";
-import { axiosInstance } from "../lib/axios";
-import ErrorBanner from "./ErrorBanner.jsx"; // Import the new component
-import TaskDetailModal from "./TaskDetailModal";
+import { axiosInstance } from "../../lib/axios.js";
+import TaskDetailModal from "./TaskDetailModal.jsx";
 
 const localizer = momentLocalizer(moment);
 const DnDCalendar = withDragAndDrop(Calendar);
@@ -23,31 +22,29 @@ const TaskCalendar = () => {
   const [warning, setWarning] = useState("");
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
   // Fetch all required data on component mount
   useEffect(() => {
     const fetchAllData = async () => {
       setLoading(true);
-      setError("");
-      
+
       try {
         // Fetch tasks first
         const tasksResponse = await axiosInstance.get("/tasks");
-        
+
         // Transform task data to match calendar format
         const transformedTasks = tasksResponse.data.map(task => ({
           ...task,
           start: new Date(task.startTime || Date.now()),
           end: new Date(task.endTime || Date.now() + 3600000), // Add 1 hour as default
         }));
-        
+
         setTasks(transformedTasks);
         try {
           const coursesResponse = await axiosInstance.get("/courses");
           const courses = coursesResponse.data;
           setCourses(courses);
-        
+
           if (courses.length > 0) {
             const courseId = courses[0]._id; // or whichever course you want
             const chapterResponse = await axiosInstance.get(`/chapters/all/${courseId}`);
@@ -60,8 +57,8 @@ const TaskCalendar = () => {
           setCourses([]);
           setChapters([]);
         }
-        
-        
+
+
       } catch (err) {
         console.error("Error fetching tasks:", err);
         setError("Failed to load tasks. Please try again later.");
@@ -69,7 +66,7 @@ const TaskCalendar = () => {
         setLoading(false);
       }
     };
-    
+
     fetchAllData();
   }, []);
 
@@ -117,7 +114,7 @@ const TaskCalendar = () => {
     } catch (err) {
       console.error("Error updating task:", err);
       setError("Failed to update task. Please try again.");
-      
+
       // Revert to original state if API call fails
       fetchTasks();
     }
@@ -200,12 +197,12 @@ const TaskCalendar = () => {
           t._id === selectedTask._id ? { ...t, status: "Completed" } : t
         )
       );
-      
+
       // API update
       await axiosInstance.put(`/tasks/${selectedTask._id}`, {
         status: "Completed"
       });
-      
+
       setSelectedTask(null);
     } catch (err) {
       console.error("Error updating task status:", err);
@@ -222,12 +219,12 @@ const TaskCalendar = () => {
           t._id === selectedTask._id ? { ...t, status: "Pending" } : t
         )
       );
-      
+
       // API update
       await axiosInstance.put(`/tasks/${selectedTask._id}`, {
         status: "Pending"
       });
-      
+
       setSelectedTask(null);
     } catch (err) {
       console.error("Error updating task status:", err);
@@ -240,10 +237,10 @@ const TaskCalendar = () => {
     try {
       // Optimistic delete
       setTasks(tasks.filter((t) => t._id !== selectedTask._id));
-      
+
       // API delete
       await axiosInstance.delete(`/tasks/${selectedTask._id}`);
-      
+
       setSelectedTask(null);
     } catch (err) {
       console.error("Error deleting task:", err);
@@ -270,15 +267,15 @@ const TaskCalendar = () => {
         courseId: selectedTask.courseId || null,
         chapterId: selectedTask.chapterId || null
       };
-      
+
       // Optimistic update
       setTasks(
         tasks.map((t) => (t._id === selectedTask._id ? selectedTask : t))
       );
-      
+
       // API update
       await axiosInstance.put(`/tasks/${selectedTask._id}`, taskData);
-      
+
       setSelectedTask(null);
       setWarning("");
     } catch (err) {
@@ -308,17 +305,17 @@ const TaskCalendar = () => {
         courseId: newTask.courseId || null,
         chapterId: newTask.chapterId || null
       };
-      
+
       // API create
       const response = await axiosInstance.post("/tasks", taskData);
-      
+
       // Add the new task with API-generated ID to state
       const createdTask = {
         ...response.data,
         start: new Date(response.data.startTime),
         end: new Date(response.data.endTime)
       };
-      
+
       setTasks(prev => [...prev, createdTask]);
       setNewTask(null);
       setWarning("");
@@ -334,9 +331,21 @@ const TaskCalendar = () => {
   };
 
 
-
-  const renderSimpleCalendar = () => {
+  if (loading) {
     return (
+      <div className={styles.loadingContainer}>
+        <Loader size={32} className={styles.spinner} />
+        <p>Loading calendar...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.container}>
+
+      {selectedTask && TaskDetailModal(selectedTask, false)}
+      {newTask && TaskDetailModal(newTask, true)}
+
       <div ref={calendarRef} className={styles.calendar}>
         <DnDCalendar
           localizer={localizer}
@@ -370,32 +379,6 @@ const TaskCalendar = () => {
           })}
         />
       </div>
-    );
-  };
-
-  if (loading) {
-    return (
-      <div className={styles.loadingContainer}>
-        <Loader size={32} className={styles.spinner} />
-        <p>Loading calendar...</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className={styles.container}>
-      <ErrorBanner 
-        error={error}
-        onRetry={() => {
-          setError("");
-          fetchTasks();
-        }}
-      />
-
-      {selectedTask && TaskDetailModal(selectedTask, false,handleUpdateTask)}
-      {newTask && TaskDetailModal(newTask, true, handleCreateTask)}
-
-      {renderSimpleCalendar()}
     </div>
   );
 };

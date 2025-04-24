@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { axiosInstance } from "../lib/axios";
+import { axiosInstance } from "../../lib/axios";
 import moment from "moment";
 import TaskDetailModal from "./TaskDetailModal";
 import styles from "./taskList.module.css";
