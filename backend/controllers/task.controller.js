@@ -101,11 +101,12 @@ export const getUserTasks = async (req, res) => {
       .populate({ path: "chapterId", select: "title" })
       .sort({ startTime: 1 });
 
-    res.json(tasks);
+    return res.status(200).json(tasks );
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
 
 export const updateTask = async (req, res) => {
   try {

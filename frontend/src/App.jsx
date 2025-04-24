@@ -15,7 +15,7 @@ import BufferPage from "./pages/BufferPage";
 import Courses from "./pages/Courses";
 import Planner from "./pages/Planner";
 import Settings from "./pages/Settings";
-import Studyzone from "./pages/StudyzonePage";
+import Studyzone from "./pages/Studyzone";
 import Entry from "./pages/Entry";
 import Chapters from "./pages/Chapters";
 import RouteTracker from "./components/RouteTracker";

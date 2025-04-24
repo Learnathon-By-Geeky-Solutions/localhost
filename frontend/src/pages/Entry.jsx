@@ -3,7 +3,9 @@ import styles from "./entry.module.css"
 
 const Entry = () => {
   return (
-    <div>Entry</div>
+    <div className={styles.container}>
+      <h1>ENTRY PAGE</h1>
+    </div>
   )
 }
 

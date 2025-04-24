@@ -5,7 +5,6 @@ import {
   getReminderById,
   updateReminder,
   deleteReminder,
-  subscribeUser,
 } from "../controllers/reminder.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
 import { rateLimiter } from "../middleware/rateLimit.middleware.js";
@@ -21,7 +20,5 @@ router.get("/:id", rateLimiter, protectRoute, getReminderById);
 router.put("/:id", rateLimiter, protectRoute, updateReminder);
 
 router.delete("/:id", rateLimiter, protectRoute, deleteReminder);
-
-router.post("/subscribe", rateLimiter, protectRoute, subscribeUser);
 
 export default router;
