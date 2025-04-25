@@ -25,8 +25,12 @@ const userSchema = new mongoose.Schema(
       required: true,
       minlength: 6,
     },
-    subscription: {
-      type: Object, // Stores the push subscription object
+    resetOtp: {
+      type: String,
+      default: null,
+    },
+    resetOtpExpireAt: {
+      type: Number,
       default: null,
     },
   },

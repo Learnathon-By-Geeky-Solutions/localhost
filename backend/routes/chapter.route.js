@@ -7,27 +7,23 @@ import {
   deleteChapter,
 } from "../controllers/chapter.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
+import { rateLimiter } from "../middleware/rateLimit.middleware.js";
 
 const router = express.Router();
 
 // Create a chapter
-router.post("/", protectRoute, createChapter);
+router.post("/", rateLimiter, protectRoute, createChapter);
 
-// Get all chapters for a course (using '/course/:courseId' to avoid conflict with getChapterById)
-// router.get("/course/:courseId", protectRoute, getChapters);
-
-/**
- * @changed_the_path_to_maintain_consistancy
- */
-router.get("/", protectRoute, getChapters);
+// Get all chapters for a course
+router.get("/all/:courseId", rateLimiter, protectRoute, getChapters);
 
 // Get a single chapter by ID
-router.get("/:id", protectRoute, getChapterById);
+router.get("/:id", rateLimiter, protectRoute, getChapterById);
 
 // Update a chapter
-router.put("/:id", protectRoute, updateChapter);
+router.put("/:id", rateLimiter, protectRoute, updateChapter);
 
 // Delete a chapter
-router.delete("/:id", protectRoute, deleteChapter);
+router.delete("/:id", rateLimiter, protectRoute, deleteChapter);
 
 export default router;

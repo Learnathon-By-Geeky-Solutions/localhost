@@ -15,7 +15,11 @@ import BufferPage from "./pages/BufferPage";
 import Courses from "./pages/Courses";
 import Planner from "./pages/Planner";
 import Settings from "./pages/Settings";
-import Studyzone from "./pages/StudyzonePage";
+import Studyzone from "./pages/Studyzone";
+import Entry from "./pages/Entry";
+import Chapters from "./pages/Chapters";
+import RouteTracker from "./components/RouteTracker";
+import Test from "./pages/Test";
 
 const App = () => {
   const { isCheckingAuth, user, checkAuth } = useAuthStore();
@@ -23,15 +27,22 @@ const App = () => {
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+  useEffect(() => {
+    localStorage.setItem(`hasSeenWelcome`, false);
+
+  }, [])
 
   if (isCheckingAuth) return <BufferPage />;
 
+
+
   return (
     <Router>
+      <RouteTracker />
       <Routes>
         <Route
           path="/"
-          element={<Navigate to={user ? "/dashboard" : "/login"} />}
+          element={<Navigate to={user ? localStorage.getItem("lastPath") || "/dashboard" : "/login"} />}
         />
 
         <Route
@@ -46,6 +57,19 @@ const App = () => {
         <Route
           path="/recover"
           element={user ? <Navigate to="/dashboard" /> : <RecoverPage />}
+        />
+
+        <Route
+          path="/entry"
+          element={
+            user ? (
+              <ProtectedLayout>
+                <Entry />
+              </ProtectedLayout>
+            ) : (
+              <Navigate to="/" />
+            )
+          }
         />
 
         <Route
@@ -101,6 +125,32 @@ const App = () => {
         />
 
         <Route
+          path="/courses/:id"
+          element={
+            user ? (
+              <ProtectedLayout>
+                <Chapters />
+              </ProtectedLayout>
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+
+        {/* <Route
+          path="/chapter/:id"
+          element={
+            user ? (
+              <ProtectedLayout>
+                <ChapterDetails />
+              </ProtectedLayout>
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        /> */}
+
+        <Route
           path="/settings"
           element={
             user ? (
@@ -112,6 +162,7 @@ const App = () => {
             )
           }
         />
+        <Route path="/test" element={<Test/>}/>
       </Routes>
     </Router>
   );

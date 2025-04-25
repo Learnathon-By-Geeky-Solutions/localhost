@@ -1,0 +1,22 @@
+
+.container {
+    height: 100%;
+    display: flex;
+    background-color:lightslategray;
+    flex-direction: column;
+
+}
+
+.content{    
+    display: flex;
+    height: 92%;
+}
+
+.page{
+
+    width: 100%;
+    background-color: white;
+    overflow-y:visible;
+
+
+}

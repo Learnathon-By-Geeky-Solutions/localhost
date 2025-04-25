@@ -4,8 +4,10 @@ import { Navigate } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
 import { Topbar } from './Topbar';
 import Navbar from './Navbar';
+import PropTypes from "prop-types";
 
-import styles from '../app.module.css';
+
+import styles from './protectedLayout.module.css';
 
 const ProtectedLayout = ({ children }) => {
   const { user } = useAuthStore();
@@ -15,7 +17,7 @@ const ProtectedLayout = ({ children }) => {
   return (
     <div className={styles.container}>
       <Topbar />
-      <div className={styles.body}>
+      <div className={styles.content}>
         <div className={styles.page}>
           {children}
         </div>
@@ -24,5 +26,10 @@ const ProtectedLayout = ({ children }) => {
     </div>
   );
 };
+
+ProtectedLayout.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
 
 export default ProtectedLayout;

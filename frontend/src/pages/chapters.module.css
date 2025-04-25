@@ -1,0 +1,155 @@
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: top;
+  background-color: #f8f9fa;
+  max-height: 100% ;
+  overflow-y: scroll; 
+  height: 100%;
+
+}
+
+
+.card {
+  all: unset;
+  margin: 25px;
+  width: 220px;
+  height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffb6b9; /* Dark blue-gray background */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 20px;
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition */
+  color: gray; /* Light text */
+
+}
+
+.courseCard:hover {
+  transform: translateY(-4px); 
+  background-color: #fb8e92; 
+  cursor: pointer;
+}
+
+.icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 10px; /* Add spacing below the icon */
+}
+
+.title {
+  font-size: 1.2rem; /* Slightly larger title */
+  margin-bottom: 8px; /* Spacing between title and description */
+  font-weight: 700; /* Bold title */
+  color: darkslategrey; /* Light text */
+  
+}
+
+
+
+
+/* Container for modal overlay */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it's on top */
+}
+
+/* Modal content */
+.modalForm{
+  background-color: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  width: 50%;
+  height: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modalTitle{
+  font-size: 1.2rem; /* Slightly larger title */
+  margin-bottom: 8px; /* Spacing between title and description */
+  font-weight: 700; /* Bold title */
+  color: darkslategrey; /* Light text */
+}
+
+.newCourseInput {
+  width: 100%;
+  margin: 10px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.newCourseInput input{
+  width: 80%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  resize: none;
+  transition: border 0.3s ease;
+  box-sizing: border-box;
+}
+
+.newCourseInput input:focus,
+.newCourseInput textarea:focus {
+  border-color: #4caf50;
+}
+
+
+
+
+.modalActions {
+  width: 80%;
+  display: flex;
+  justify-content: right;
+  
+}
+
+.submitButton {
+  margin-left: 10px;
+  background-color: lightslategray;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cancelButton {
+  background-color: lightslategray;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.submitButton:hover {
+  background-color: #45a049;
+}
+
+.cancelButton:hover {
+  background-color: #e53935;
+}

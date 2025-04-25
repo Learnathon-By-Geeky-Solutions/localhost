@@ -1,15 +1,148 @@
+.container {
+  position: absolute;
+  top: 50px; /* Right below the topbar */
+  right: 20px;
+  width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+  background-color: lightslategray; /* Pure White from palette */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Shadow from palette */
+  border-radius: 10px;
+  z-index: 1000; /* Ensure it's above other content */
+  padding: 16px;
+  color: #4a4e69; /* Soft Charcoal from palette */
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.2s ease-out;
+  transform-origin: top right;
+  border: 1px solid #f7f7f7; /* Very Light Gray from palette */
+}
 
-.container{
-    top:55px;
-    right: 170px;
-    /* background-color: red; */
-    border: 1px solid gray;
-    border-radius: 20px;
-    position: absolute;
-    width: 350px;
-    height: 400px;
-    z-index: 100;
-    background-color: lightslategray;
-    display: flex;
-    justify-content: center;
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.container h3 {
+  margin: 0 0 16px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f4f4f9; /* Soft Light Gray from palette */
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  text-align: center;
+}
+
+.container p {
+  text-align: center;
+  color: #a3a8b5; /* Light Gray Text from palette */
+  margin: 16px 0;
+}
+
+.container ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.container li {
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  background-color: #f9f6f6; /* Very Light Gray from palette */
+  border-left: 3px solid #6c5b7b; /* Soft Purple from palette */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Shadow from palette */
+  transition: background-color 0.2s;
+}
+
+.container li:hover {
+  background-color: #f7c0c1; /* Soft Light Gray from palette */
+  border-left: 3px solid #fd9ea1; /* Soft Peach from palette */
+  transform: translateX(2px);
+}
+
+.taskTitle {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #4a4e69; /* Soft Charcoal from palette */
+}
+
+.timestamp {
+  font-size: 12px;
+  color: #717274; /* Light Gray Text from palette */
+}
+
+/* Loading animation */
+.loadingDots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background-color: #6c5b7b; /* Soft Purple from palette */
+  border-radius: 50%;
+  margin: 0 4px;
+  animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.dot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes bounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+/* New section styles */
+.notificationSection {
+  margin-bottom: 16px;
+}
+
+.sectionHeader {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 8px 0;
+  padding-bottom: 4px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.3);
+}
+
+.newNotification {
+  border-left: 3px solid #ffb6b9 !important; /* Soft Peach from palette */
+  background-color: rgba(
+    255,
+    182,
+    185,
+    0.1
+  ); /* Slightly highlighted background */
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: calc(100% - 40px);
+    right: 10px;
+    max-height: 350px;
+  }
 }

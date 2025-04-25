@@ -1,17 +1,17 @@
-import React, { useState } from 'react'
-import styles from './test.module.css'
+import React from 'react'
+import TaskDetailModal from '../components/TASKS/TaskDetailModal'
+import { AlertTriangle } from 'lucide-react';
 
 const Test = () => {
-  const [isHovered, setIsHovered] = useState(false)
-
   return (
-    <div
-      className={`${styles.container} ${isHovered ? styles.expanded : ''}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div className={styles.box}></div>
-      {isHovered && <div className={styles.box}></div>}
+    <div>
+      <TaskDetailModal
+        // popupPosition={{ x: 100, y: 50 }}
+        onClose={()=>{
+          alert("yeee");
+          
+        }}
+      />
     </div>
   )
 }

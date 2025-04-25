@@ -3,49 +3,87 @@ import Chapter from "../models/chapter.model.js";
 import Course from "../models/course.model.js";
 import mongoose from "mongoose";
 
+// Utility function to validate ObjectId
+const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
+
+// --- Helper functions:
+
+const validateCourse = async (courseId) => {
+  if (!courseId) return null;
+  if (!isValidObjectId(courseId)) return new Error("Invalid courseId format.");
+
+  const course = await Course.findById(courseId);
+  if (!course) return new Error("Invalid courseId. Course not found.");
+
+  return course;
+};
+
+const validateChapter = async (chapterId) => {
+  if (!chapterId) return null;
+  if (!isValidObjectId(chapterId)) return new Error("Invalid chapterId format.");
+
+  const chapter = await Chapter.findById(chapterId);
+  if (!chapter) return new Error("Invalid chapterId. Chapter not found.");
+
+  return chapter;
+};
+
+//////////////////////////////////////////////////////////////////////
+
+
+
+
+
 
 export const createTask = async (req, res) => {
   try {
-    const { title, description, dueDate, priority, status, courseId, chapterId } = req.body;
-
+    const {
+      title,
+      description,
+      priority,
+      status,
+      startTime,
+      endTime,
+      courseId,
+      chapterId,
+    } = req.body;
+    
+    // Check authentication
     if (!req.user) {
       return res.status(401).json({ message: "Unauthorized - No user found" });
     }
 
-    // Verify if courseId exists in the Course collection
-    let validCourse = null;
-    if (courseId) {
-      validCourse = await Course.findById(courseId);
-      if (!validCourse) {
-        return res.status(400).json({ message: "Invalid courseId. Course not found." });
-      }
+    // Validate time logic
+    if (startTime && endTime && new Date(endTime) <= new Date(startTime)) {
+      return res.status(400).json({ message: "endTime must be after startTime." });
     }
 
-    // Verify if chapterId exists in the Chapter collection
-    let validChapter = null;
-    if (chapterId) {
-      validChapter = await Chapter.findById(chapterId);
-      if (!validChapter) {
-        return res.status(400).json({ message: "Invalid chapterId. Chapter not found." });
-      }
+    // Validate optional relations
+    const course = await validateCourse(courseId);
+    if (course instanceof Error) {
+      return res.status(400).json({ message: course.message });
     }
 
+    const chapter = await validateChapter(chapterId);
+    if (chapter instanceof Error) {
+      return res.status(400).json({ message: chapter.message });
+    }
+
+    // Create task
     const newTask = new Task({
       title,
       description,
-      dueDate,
+      startTime,
+      endTime,
       priority,
       status,
-      courseId: validCourse ? validCourse._id : null,  
-      chapterId: validChapter ? validChapter._id : null,
+      courseId: course?._id || null,
+      chapterId: chapter?._id || null,
       user: req.user._id,
     });
 
-  
-
     await newTask.save();
     res.status(201).json(newTask);
-
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -59,11 +97,37 @@ export const getUserTasks = async (req, res) => {
     }
 
     const tasks = await Task.find({ user: req.user._id })
-      .populate({ path: "courseId", select: "title" }) 
+      .populate({ path: "courseId", select: "title" })
       .populate({ path: "chapterId", select: "title" })
-      .sort({ dueDate: 1 });
+      .sort({ startTime: 1 });
 
-    res.json(tasks);
+    return res.status(200).json(tasks );
+  } catch (error) {
+    return res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+export const changeStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+
+    if (!status) {
+      return res.status(400).json({ message: "Status is required." });
+    }
+
+    const task = await Task.findById(req.params.id);
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    if (task.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Unauthorized access" });
+    }
+
+    task.status = status;
+
+    const updatedTask = await task.save();
+    res.json(updatedTask);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -72,136 +136,129 @@ export const getUserTasks = async (req, res) => {
 
 export const updateTask = async (req, res) => {
   try {
-    const { title, description, dueDate, priority, status, courseId, chapterId } = req.body;
+    const {
+      title,
+      description,
+      startTime,
+      endTime,
+      priority,
+      status,
+      courseId,
+      chapterId,
+    } = req.body;
 
     const task = await Task.findById(req.params.id);
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
 
-    if (!task) return res.status(404).json({ message: "Task not found" });
-
-    // Check if the task belongs to the logged-in user
     if (task.user.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: "Unauthorized access" });
     }
 
-    // Update the task fields
-    task.title = title || task.title;
-    task.description = description || task.description;
-    task.dueDate = dueDate || task.dueDate;
-    task.priority = priority || task.priority;
-    task.status = status || task.status;
+    if (startTime && endTime && new Date(endTime) <= new Date(startTime)) {
+      return res.status(400).json({ message: "endTime must be after startTime." });
+    }
 
-    // Handle courseId and chapterId
+    // Update basic fields (if provided)
+    Object.assign(task, {
+      title: title ?? task.title,
+      description: description ?? task.description,
+      startTime: startTime ?? task.startTime,
+      endTime: endTime ?? task.endTime,
+      priority: priority ?? task.priority,
+      status: status ?? task.status,
+    });
+
+    // Update courseId (can be set to null or a valid ID)
     if (courseId === null) {
-      task.courseId = null; // Set to null if the request explicitly asks for it
+      task.courseId = null;
     } else if (courseId) {
-      task.courseId = new mongoose.Types.ObjectId(courseId); // Ensure it's a valid ObjectId
+      const course = await validateCourse(courseId);
+      if (course instanceof Error) {
+        return res.status(400).json({ message: course.message });
+      }
+      task.courseId = course._id;
     }
 
+    // Update chapterId (can be set to null or a valid ID)
     if (chapterId === null) {
-      task.chapterId = null; // Set to null if the request explicitly asks for it
+      task.chapterId = null;
     } else if (chapterId) {
-      task.chapterId = new mongoose.Types.ObjectId(chapterId); // Ensure it's a valid ObjectId
+      const chapter = await validateChapter(chapterId);
+      if (chapter instanceof Error) {
+        return res.status(400).json({ message: chapter.message });
+      }
+      task.chapterId = chapter._id;
     }
 
-    // Save updated task
     const updatedTask = await task.save();
-
     res.json(updatedTask);
-
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-// Delete a task (Protected)
+
 export const deleteTask = async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
 
     if (!task) return res.status(404).json({ message: "Task not found" });
 
-    // Check if the task belongs to the logged-in user
     if (task.user.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: "Unauthorized access" });
     }
 
     await task.deleteOne();
     res.json({ message: "Task deleted successfully" });
-
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-
-// Get all tasks under a specific course (Protected)
 export const getTasksByCourse = async (req, res) => {
   try {
     if (!req.user) {
       return res.status(401).json({ message: "Unauthorized - No user found" });
     }
 
-    const { courseId } = req.params; // Extract courseId from URL
+    const { courseId } = req.params;
+
+    if (!isValidObjectId(courseId)) {
+      return res.status(400).json({ message: "Invalid courseId format." });
+    }
 
     const tasks = await Task.find({ user: req.user._id, courseId })
-      .populate("courseId", "title") // Fetch course title
-      .populate("chapterId", "title") // Fetch chapter title
-      .sort({ dueDate: 1 });
+      .populate("courseId", "title")
+      .populate("chapterId", "title")
+      .sort({ startTime: 1 });
 
     res.json(tasks);
-
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-
-
-// Get all tasks under a specific chapter (Protected)
 export const getTasksByChapter = async (req, res) => {
   try {
     if (!req.user) {
       return res.status(401).json({ message: "Unauthorized - No user found" });
     }
 
-    const { chapterId } = req.params; // Extract chapterId from URL
+    const { chapterId } = req.params;
+
+    if (!isValidObjectId(chapterId)) {
+      return res.status(400).json({ message: "Invalid chapterId format." });
+    }
 
     const tasks = await Task.find({ user: req.user._id, chapterId })
-      .populate("courseId", "title") // Fetch course title
-      .populate("chapterId", "title") // Fetch chapter title
-      .sort({ dueDate: 1 });
+      .populate("courseId", "title")
+      .populate("chapterId", "title")
+      .sort({ startTime: 1 });
 
     res.json(tasks);
-
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
-
-
-
-
-
-
-
-// // Get a specific task by ID (Protected)
-// export const getTaskById = async (req, res) => {
-//   try {
-//     const task = await Task.findById(req.params.id);
-
-//     if (!task) return res.status(404).json({ message: "Task not found" });
-
-//     // Check if the task belongs to the logged-in user
-//     if (task.user.toString() !== req.user._id.toString()) {
-//       return res.status(403).json({ message: "Unauthorized access" });
-//     }
-
-//     res.json(task);
-
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
-
-
-
