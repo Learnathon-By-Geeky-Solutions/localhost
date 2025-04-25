@@ -64,7 +64,7 @@ const TaskList = () => {
                   type="checkbox"
                   checked={task.status === "Completed"}
                   onChange={(e) =>{
-                    handleStatusToggle(task, e);
+                    handleStatusToggle(task);
                     // task = {...task, title:"In-Progress"};
                   }}
                   onClick={(e) => e.stopPropagation()}

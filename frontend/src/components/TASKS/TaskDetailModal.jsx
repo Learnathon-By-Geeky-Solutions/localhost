@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import moment from "moment";
 import styles from './taskDetailModal.module.css';
-import { Check, Save, Trash, X, Loader } from "lucide-react";
+import { Save, Trash, X } from "lucide-react";
 import { useTaskStore } from '../../store/useTaskStore';
 
 const now = new Date();
