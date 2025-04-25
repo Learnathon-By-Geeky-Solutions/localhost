@@ -18,7 +18,7 @@ const newTask = {
   chapterId: null,
 };
 
-const TaskDetailModal = ({ givenTask = null, givenTime = null, popupPosition = null, onClose = () => {} }) => {
+const TaskDetailModal = ({ givenTask = null, givenTime = null, popupPosition = null, onClose = () => { } }) => {
   const [task, setTask] = useState(givenTask ? givenTask : newTask);
   const [warning, setWarning] = useState("");
 
@@ -37,16 +37,15 @@ const TaskDetailModal = ({ givenTask = null, givenTime = null, popupPosition = n
   const handleSave = () => {
     if (!task.title.trim()) {
       setWarning("Title is required!");
-      return;
     }
-    createTask(task); // creating new task
 
-    // if (givenTask) {
-    //   // updateTask(task); // editing existing task
-    // } else {
-    // }
+    if (givenTask) {
+      updateTask(task); // editing existing task
+    } else {
+      createTask(task); // creating new task
+    }
 
-    // onClose();
+    onClose();
   };
 
   const handleDelete = () => {

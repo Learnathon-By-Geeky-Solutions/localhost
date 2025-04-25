@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { axiosInstance } from "../../lib/axios";
 import { useTaskStore } from "../../store/useTaskStore";
 import moment from "moment";
 import TaskDetailModal from "./TaskDetailModal";
@@ -10,46 +9,12 @@ const TaskList = () => {
   // const [tasks, setTasks] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
-  const [courses, setCourses] = useState([]);
-  const {tasks,isFetchingTasks, fetchTasks}  = useTaskStore();
+  const { tasks, isFetchingTasks, fetchTasks } = useTaskStore();
 
 
   useEffect(() => {
     fetchTasks();
   }, []);
-
-
-  // const handleStatusToggle = async (taskId, e) => {
-  //   try {
-  //     e.stopPropagation(); // Prevent modal from opening
-
-  //     // Find the task to update
-  //     const task = tasks.find((t) => t._id === taskId);
-  //     if (!task) {
-  //       console.error("Task not found");
-  //       return;
-  //     }
-
-  //     // Prepare updated task object
-  //     const newStatus = task.status === "Completed" ? "Incomplete" : "Completed";
-  //     const updatedTask = { ...task, status: newStatus };
-
-  //     // Update task on the server
-  //     const res = await axiosInstance.put(`/tasks/${taskId}`, updatedTask);
-  //     if (res.status !== 200) {
-  //       console.error("Failed to update task:", res);
-  //       return;
-  //     }
-
-  //     // Update local state
-  //     setTasks((prevTasks) =>
-  //       prevTasks.map((t) => (t._id === taskId ? updatedTask : t))
-  //     );
-
-  //   } catch (error) {
-  //     console.error("Error toggling task status:", error.message);
-  //   }
-  // };
 
 
   const openNewTaskModal = () => {
@@ -67,13 +32,6 @@ const TaskList = () => {
     setSelectedTask(null);
   };
 
-  const getChaptersForCourse = (courseId) => {
-    const course = courses.find(c => c._id === courseId);
-    return course?.chapters || [];
-  };
-
-  
-
   return (
     <div className={styles.container}>
       <div className={styles.taskList}>
@@ -84,70 +42,70 @@ const TaskList = () => {
           </button>
         </div>
 
-        {tasks.length === 0 ? (
-          <div className={styles.noTasks}>No tasks yet. Create one to get started!</div>
-        ) : (
-          tasks.map((task) => (
-            <button
-              type="button"
-              key={task._id}
-              className={`${styles.taskItem} ${task.status === "Completed" ? styles.completed : ""}`}
-              onClick={() => openEditTaskModal(task)}
-              aria-label={`Edit task: ${task.title}`}
-            >
-              <input
-                type="checkbox"
-                checked={task.status === "Completed"}
-                onChange={(e) => handleStatusToggle(task._id, e)}
-                onClick={(e) => e.stopPropagation()}
-              />
+        {isFetchingTasks ?
+          <div className={styles.noTasks}> fetching tasks... </div>
+          : tasks.length === 0 ? (
+            <div className={styles.noTasks}>No tasks yet. Create one to get started!</div>
+          ) : (
+            tasks.map((task) => (
+              <button
+                type="button"
+                key={task._id}
+                className={`${styles.taskItem} ${task.status === "Completed" ? styles.completed : ""}`}
+                onClick={() => openEditTaskModal(task)}
+                aria-label={`Edit task: ${task.title}`}
+              >
+                <input
+                  type="checkbox"
+                  checked={task.status === "Completed"}
+                  onChange={(e) => handleStatusToggle(task._id, e)}
+                  onClick={(e) => e.stopPropagation()}
+                />
 
-              <div className={styles.taskContent}>
-                <div className={styles.taskTitleRow}>
-                  <h4>{task.title}</h4>
-                  <div
-                    className={styles.priorityIndicator}
-                    style={{
-                      backgroundColor:
-                        task.priority === "High"
-                          ? "#f44336"
-                          : task.priority === "Medium"
-                            ? "#4285f4"
-                            : "#ff9800",
-                    }}
-                  />
+                <div className={styles.taskContent}>
+                  <div className={styles.taskTitleRow}>
+                    <h4>{task.title}</h4>
+                    <div
+                      className={styles.priorityIndicator}
+                      style={{
+                        backgroundColor:
+                          task.priority === "High"
+                            ? "#f44336"
+                            : task.priority === "Medium"
+                              ? "#4285f4"
+                              : "#ff9800",
+                      }}
+                    />
+                  </div>
+
+                  <p className={styles.taskDescription}>{task.description}</p>
+
+                  {task.start && task.end && (
+                    <div className={styles.taskDates}>
+                      <span>{moment(task.start).format("MMM D, h:mm A")}</span>
+                      <span> - </span>
+                      <span>{moment(task.end).format("MMM D, h:mm A")}</span>
+                    </div>
+                  )}
+
+                  {/* {task.courseId && (
+                    <div className={styles.taskCourse}>
+                      {courses.find(c => c._id === task.courseId)?.title || 'Unknown Course'}
+                      {task.chapterId && ` > ${getChaptersForCourse(task.courseId).find(ch => ch._id === task.chapterId)?.title || 'Unknown Chapter'}`}
+                    </div>
+                  )} */}
                 </div>
-
-                <p className={styles.taskDescription}>{task.description}</p>
-
-                {task.start && task.end && (
-                  <div className={styles.taskDates}>
-                    <span>{moment(task.start).format("MMM D, h:mm A")}</span>
-                    <span> - </span>
-                    <span>{moment(task.end).format("MMM D, h:mm A")}</span>
-                  </div>
-                )}
-
-                {task.courseId && (
-                  <div className={styles.taskCourse}>
-                    {courses.find(c => c._id === task.courseId)?.title || 'Unknown Course'}
-                    {task.chapterId && ` > ${getChaptersForCourse(task.courseId).find(ch => ch._id === task.chapterId)?.title || 'Unknown Chapter'}`}
-                  </div>
-                )}
-              </div>
-            </button>
-          ))
-        )}
+              </button>
+            ))
+          )}
       </div>
 
-      {/* <TaskDetailModal
-        isOpen={isModalOpen}
-        closeModal={closeModal}
-        task={selectedTask}
-        onSave={handleSaveTask}
-        courses={courses}
-        getChaptersForCourse={getChaptersForCourse}
-      /> */}
+      {isModalOpen &&
+        <TaskDetailModal
+          givenTask={selectedTask}
+          onClose={closeModal}
+        />
+      }
     </div>
   );
 }
