@@ -4,63 +4,26 @@ import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
-import { Check, Save, Trash, X, Loader } from "lucide-react";
+import { Loader } from "lucide-react";
 import styles from "./taskCalendar.module.css";
-import { axiosInstance } from "../../lib/axios.js";
+
 import TaskDetailModal from "./TaskDetailModal.jsx";
+import { useTaskStore } from "../../store/useTaskStore.js";
 
 const localizer = momentLocalizer(moment);
 const DnDCalendar = withDragAndDrop(Calendar);
 
 const TaskCalendar = () => {
-  const [tasks, setTasks] = useState([]);
-  const [courses, setCourses] = useState([]);
-  const [chapters, setChapters] = useState([]);
+  const { tasks, isFetchingTasks, fetchTasks } = useTaskStore();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
-  const [newTask, setNewTask] = useState(null);
+  const [selectedTime, setSelectedTime] = useState(null);
   const calendarRef = useRef(null);
-  const [warning, setWarning] = useState("");
-  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
-  const [loading, setLoading] = useState(true);
 
-  // Fetch all required data on component mount
+
   useEffect(() => {
-    const fetchAllTasks = async () => {
-      setLoading(true);
-
-      try {
-        const response = await axiosInstance.get("/tasks");
-
-        
-        setTasks(response.data);
-        // try {
-        //   const coursesResponse = await axiosInstance.get("/courses");
-        //   const courses = coursesResponse.data;
-        //   setCourses(courses);
-
-        //   if (courses.length > 0) {
-        //     const courseId = courses[0]._id; // or whichever course you want
-        //     const chapterResponse = await axiosInstance.get(`/chapters/all/${courseId}`);
-        //     setChapters(chapterResponse.data);
-        //   } else {
-        //     setChapters([]);
-        //   }
-        // } catch (err) {
-        //   console.warn("Error fetching courses or chapters:", err);
-        //   setCourses([]);
-        //   setChapters([]);
-        // }
-
-
-      } catch (err) {
-        console.error("Error fetching tasks:", err);
-        setError("Failed to load tasks. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAllTasks();
+    fetchTasks();
+    console.log("Fetched tasks:", tasks);
   }, []);
 
   useEffect(() => {
@@ -83,248 +46,41 @@ const TaskCalendar = () => {
     return cleanupDragMarks;
   }, [tasks]);
 
+  const handleSelectSlot = ({ start, end }) => {
+    setSelectedTime({ startTime: start, endTime: end });
+    setIsModalOpen(true);
+  };
+
+  const handleSelectEvent = (event) => {
+    setSelectedTask(event);
+    setSelectedTime(null);
+    setIsModalOpen(true);
+  };
+
   const moveTask = async ({ event, start, end }) => {
     if (start >= end) {
       end = new Date(start.getTime() + 60 * 60 * 1000); // Add 1 hour if invalid
     }
 
-    try {
-      // Update frontend state optimistically
-      const updatedTasks = tasks.map((task) =>
-        task._id === event._id ? { ...task, start, end } : task
-      );
-      setTasks(updatedTasks);
-
-      // Prepare task data for API
-      const taskToUpdate = tasks.find(task => task._id === event._id);
-      if (!taskToUpdate) return;
-
-      // Send update to API
-      await axiosInstance.put(`/tasks/${event._id}`, {
-        startTime: start,
-        endTime: end
-      });
-    } catch (err) {
-      console.error("Error updating task:", err);
-      setError("Failed to update task. Please try again.");
-
-      // Revert to original state if API call fails
-      fetchTasks();
-    }
+    await updateTask({ ...event, startTime: start, endTime: end });
+    await fetchTasks();
   };
 
-  const fetchTasks = async () => {
-    try {
-      setLoading(true);
-      const response = await axiosInstance.get("/tasks");
-      const transformedTasks = response.data.map(task => ({
-        ...task,
-        start: new Date(task.startTime || Date.now()),
-        end: new Date(task.endTime || Date.now() + 3600000)
-      }));
-      setTasks(transformedTasks);
-      setError("");
-    } catch (err) {
-      console.error("Error fetching tasks:", err);
-      setError("Failed to refresh tasks.");
-    } finally {
-      setLoading(false);
-    }
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedTask(null);
+    setSelectedTime(null);
   };
 
-  const calculateSafePosition = (x, y) => {
-    if (!calendarRef.current) return { x: 0, y: 0 };
+  // ✅ Convert task startTime and endTime into Date objects
+  const calendarEvent = tasks.map((task) => ({
+    ...task,
+    start: new Date(task.startTime),
+    end: new Date(task.endTime),
+  }));
+   
 
-    const calendarRect = calendarRef.current.getBoundingClientRect();
-    const W = calendarRect.width;
-    const H = calendarRect.height;
-
-    let safeX = 10;
-    if (x < W / 2) {
-      safeX = x + 10;
-    }
-    else {
-      safeX = x - W / 2;
-    }
-    let safeY = H / 4;
-
-    return { x: safeX, y: safeY };
-  };
-
-  const handleSelectSlot = ({ start, end, box }) => {
-    // Use the box coordinates (if available) or default to the calendar's position
-    const x = box ? box.x : 0;
-    const y = box ? box.y : 0;
-
-    // Calculate safe position
-    const safePosition = calculateSafePosition(x, y);
-    setPopupPosition(safePosition);
-
-    const newTask = {
-      title: "",
-      description: "",
-      courseId: null,
-      chapterId: null,
-      start,
-      end,
-      priority: "Medium",
-      status: "Pending",
-    };
-    setNewTask(newTask);
-  };
-
-  const handleSelectEvent = (event, e) => {
-    // Use the click event coordinates
-    if (e && e.pageX && e.pageY) {
-      const safePosition = calculateSafePosition(e.pageX, e.pageY);
-      setPopupPosition(safePosition);
-    }
-    setSelectedTask(event);
-  };
-
-  const handleMarkDone = async () => {
-    try {
-      // Optimistic update
-      setTasks(
-        tasks.map((t) =>
-          t._id === selectedTask._id ? { ...t, status: "Completed" } : t
-        )
-      );
-
-      // API update
-      await axiosInstance.put(`/tasks/${selectedTask._id}`, {
-        status: "Completed"
-      });
-
-      setSelectedTask(null);
-    } catch (err) {
-      console.error("Error updating task status:", err);
-      setError("Failed to update task status.");
-      fetchTasks(); // Revert on failure
-    }
-  };
-
-  const handleMarkNotDone = async () => {
-    try {
-      // Optimistic update
-      setTasks(
-        tasks.map((t) =>
-          t._id === selectedTask._id ? { ...t, status: "Pending" } : t
-        )
-      );
-
-      // API update
-      await axiosInstance.put(`/tasks/${selectedTask._id}`, {
-        status: "Pending"
-      });
-
-      setSelectedTask(null);
-    } catch (err) {
-      console.error("Error updating task status:", err);
-      setError("Failed to update task status.");
-      fetchTasks(); // Revert on failure
-    }
-  };
-
-  const handleDelete = async () => {
-    try {
-      // Optimistic delete
-      setTasks(tasks.filter((t) => t._id !== selectedTask._id));
-
-      // API delete
-      await axiosInstance.delete(`/tasks/${selectedTask._id}`);
-
-      setSelectedTask(null);
-    } catch (err) {
-      console.error("Error deleting task:", err);
-      setError("Failed to delete task.");
-      fetchTasks(); // Revert on failure
-    }
-  };
-
-  const handleUpdateTask = async () => {
-    if (!selectedTask.title.trim()) {
-      setWarning("Task title cannot be empty!");
-      return;
-    }
-
-    try {
-      // Prepare the data for API
-      const taskData = {
-        title: selectedTask.title,
-        description: selectedTask.description,
-        startTime: selectedTask.start,
-        endTime: selectedTask.end,
-        priority: selectedTask.priority,
-        status: selectedTask.status,
-        courseId: selectedTask.courseId || null,
-        chapterId: selectedTask.chapterId || null
-      };
-
-      // Optimistic update
-      setTasks(
-        tasks.map((t) => (t._id === selectedTask._id ? selectedTask : t))
-      );
-
-      // API update
-      await axiosInstance.put(`/tasks/${selectedTask._id}`, taskData);
-
-      setSelectedTask(null);
-      setWarning("");
-    } catch (err) {
-      console.error("Error updating task:", err);
-      setError("Failed to update task.");
-      fetchTasks(); // Revert on failure
-    }
-  };
-
-  const handleCreateTask = async (e) => {
-    if (e) e.preventDefault();
-
-    if (!newTask?.title?.trim()) {
-      setWarning("Please enter a title for the task.");
-      return;
-    }
-
-    try {
-      // Prepare the data for API
-      const taskData = {
-        title: newTask.title,
-        description: newTask.description || "",
-        startTime: newTask.start,
-        endTime: newTask.end,
-        priority: newTask.priority || "Medium",
-        status: newTask.status || "Pending",
-        courseId: newTask.courseId || null,
-        chapterId: newTask.chapterId || null
-      };
-
-      // API create
-      const response = await axiosInstance.post("/tasks", taskData);
-
-      // Add the new task with API-generated ID to state
-      const createdTask = {
-        ...response.data,
-        start: new Date(response.data.startTime),
-        end: new Date(response.data.endTime)
-      };
-
-      setTasks(prev => [...prev, createdTask]);
-      setNewTask(null);
-      setWarning("");
-    } catch (err) {
-      console.error("Error creating task:", err);
-      setError("Failed to create task.");
-    }
-  };
-
-  const getChaptersForCourse = (courseId) => {
-    if (!courseId) return [];
-    return chapters.filter((chapter) => chapter.courseId === courseId);
-  };
-
-
-  if (loading) {
+  if (isFetchingTasks) {
     return (
       <div className={styles.loadingContainer}>
         <Loader size={32} className={styles.spinner} />
@@ -335,19 +91,15 @@ const TaskCalendar = () => {
 
   return (
     <div className={styles.container}>
-
-      {selectedTask && TaskDetailModal(selectedTask, false)}
-      {newTask && TaskDetailModal(newTask, true)}
-
       <div ref={calendarRef} className={styles.calendar}>
         <DnDCalendar
           localizer={localizer}
-          events={tasks}
+          events={calendarEvent}
           startAccessor="start"
           endAccessor="end"
           selectable
           resizable
-          defaultView={Views.MONTH}
+          defaultView={Views.WEEK}
           views={["month", "week", "day"]}
           onSelectSlot={handleSelectSlot}
           onSelectEvent={handleSelectEvent}
@@ -372,6 +124,13 @@ const TaskCalendar = () => {
           })}
         />
       </div>
+      {isModalOpen && (
+        <TaskDetailModal
+          givenTask={selectedTask}
+          givenTime={selectedTime}
+          onClose={closeModal}
+        />
+      )}
     </div>
   );
 };

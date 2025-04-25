@@ -2,11 +2,11 @@ import express from "express";
 import { 
   createTask, 
   getUserTasks, 
-  // getTaskById, 
   updateTask, 
   deleteTask,
   getTasksByCourse, 
-  getTasksByChapter 
+  getTasksByChapter, 
+  changeStatus
 } from "../controllers/task.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js"; 
 import { rateLimiter } from "../middleware/rateLimit.middleware.js";
@@ -25,6 +25,6 @@ router.get("/chapter/:chapterId", rateLimiter, protectRoute, getTasksByChapter);
 router.route("/:id")
   // .get(rateLimiter, protectRoute, getTaskById)      // Get a single task by ID (commented out)
   .put(rateLimiter, protectRoute, updateTask)         // Update a task
-  .delete(rateLimiter, protectRoute, deleteTask);     // Delete a task
-
+  .delete(rateLimiter, protectRoute, deleteTask)     // Delete a task
+  .patch(rateLimiter, protectRoute, changeStatus);    // change status 
 export default router;

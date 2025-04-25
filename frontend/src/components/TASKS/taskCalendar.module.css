@@ -14,8 +14,9 @@
 }
  
 .calendar{
-  width: 85%;
+  width: 90%;
   height: 90%;
+  overflow-y: scroll;
 
 }
 
