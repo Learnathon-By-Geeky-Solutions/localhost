@@ -10,9 +10,7 @@ const Dashboard = () => {
   const [showWelcome, setShowWelcome] = useState(false);
 
   useEffect(() => {
-    const hasSeenWelcome = localStorage.getItem(`hasSeenWelcome`);
-    console.log(hasSeenWelcome);
-    
+    const hasSeenWelcome = localStorage.getItem(`hasSeenWelcome`);    
     if (hasSeenWelcome==='false') {
 
       setShowWelcome(true);
