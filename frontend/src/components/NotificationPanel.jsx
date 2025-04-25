@@ -1,127 +1,163 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from "react";
 import styles from "./notificationPanel.module.css";
+import { axiosInstance } from "../lib/axios";
 
-const NotificationPanel = ({ onCountUpdate }) => {
-  const [reminders, setReminders] = useState([]);
+const NotificationPanel = ({
+  onNotificationsViewed,
+  fetchNewNotifications,
+  viewedIds,
+  onPanelClose,
+}) => {
+  const [newReminders, setNewReminders] = useState([]);
+  const [olderReminders, setOlderReminders] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Track IDs of notifications that were new when panel was opened
+  const [initialNewNotificationIds, setInitialNewNotificationIds] = useState(
+    []
+  );
+
+  // Flag to track first load
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
+
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchReminders = async () => {
       try {
-        const reminderRes = await fetch("http://localhost:5001/api/reminders", {
-          credentials: "include",
-        });
-        const reminderData = await reminderRes.json();
+        const response = await axiosInstance.get("/reminders");
+
         const now = new Date();
+        const dueReminders = response.data.filter((reminder) => {
+          const notificationTime = new Date(reminder.notificationTime);
+          return notificationTime <= now && !reminder.notificationSent;
+        });
 
-        // Get the start of today (midnight)
-        const startOfToday = new Date(now);
-        startOfToday.setHours(0, 0, 0, 0);
+        // Split reminders into new and older based on viewedIds
+        const newRemindersArray = dueReminders.filter(
+          (reminder) => !viewedIds.has(reminder._id)
+        );
 
-        // Get the end of tomorrow
-        const endOfTomorrow = new Date(now);
-        endOfTomorrow.setDate(endOfTomorrow.getDate() + 1);
-        endOfTomorrow.setHours(23, 59, 59, 999);
+        const olderRemindersArray = dueReminders.filter((reminder) =>
+          viewedIds.has(reminder._id)
+        );
 
-        const filteredReminders = reminderData
-          .filter((reminder) => {
-            const dueDate = new Date(reminder.taskId?.dueDate);
+        // Sort both arrays by notification time - NEW at TOP (newest first)
+        const sortedNewReminders = newRemindersArray.sort((a, b) => {
+          const dateA = new Date(a.notificationTime);
+          const dateB = new Date(b.notificationTime);
+          return dateB - dateA; // Newest first for new notifications
+        });
 
-            // Include reminders due today and tomorrow
-            return dueDate >= startOfToday && dueDate <= endOfTomorrow;
-          })
-          .sort(
-            (a, b) => new Date(a.taskId?.dueDate) - new Date(b.taskId?.dueDate)
-          );
+        // Sort older reminders with oldest at bottom
+        const sortedOlderReminders = olderRemindersArray.sort((a, b) => {
+          const dateA = new Date(a.notificationTime);
+          const dateB = new Date(b.notificationTime);
+          return dateB - dateA; // Newest first for older notifications too
+        });
 
-        setReminders(filteredReminders);
+        setNewReminders(sortedNewReminders);
+        setOlderReminders(sortedOlderReminders);
 
-        // Update the count in the parent component
-        if (onCountUpdate) {
-          onCountUpdate(filteredReminders.length);
+        // Only capture the initial new notifications once when the component first loads
+        if (isFirstLoad && sortedNewReminders.length > 0) {
+          const newIds = sortedNewReminders.map((reminder) => reminder._id);
+          setInitialNewNotificationIds(newIds);
+          setIsFirstLoad(false);
         }
-      } catch (err) {
-        console.error("Error fetching reminders:", err);
+      } catch (error) {
+        console.error("Failed to fetch reminders:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
-    const intervalId = setInterval(fetchData, 60000); // Refresh every 1 minute
-    return () => clearInterval(intervalId);
-  }, [onCountUpdate]);
+    fetchReminders();
 
-  const formatDueDate = (dateString) => {
+    // Set up periodic refresh of the panel contents
+    const refreshInterval = setInterval(fetchReminders, 5000); // Check every 5 seconds
+
+    return () => clearInterval(refreshInterval);
+  }, [viewedIds, isFirstLoad]);
+
+  // Only when the component unmounts (panel closes), pass the notification IDs to parent
+  useEffect(() => {
+    return () => {
+      // Only run if we have IDs and they haven't been processed yet
+      if (initialNewNotificationIds.length > 0) {
+        onPanelClose(initialNewNotificationIds);
+      }
+    };
+  }, [initialNewNotificationIds, onPanelClose]);
+
+  const formatTime = (dateString) => {
     const date = new Date(dateString);
-    const options = {
-      month: "numeric",
+    return date.toLocaleString(undefined, {
+      month: "short",
       day: "numeric",
-      year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-    };
-    return date.toLocaleDateString("en-US", options);
+    });
   };
 
-  const getTimeRemaining = (dueDate) => {
-    const now = new Date();
-    const due = new Date(dueDate);
-    const diffMs = due - now;
-
-    if (diffMs < 0) {
-      return "Overdue";
-    }
-
-    const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-
-    return `${diffHrs}h ${diffMins}m remaining`;
-  };
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <h3>NOTIFICATIONS</h3>
+        <div className={styles.loadingDots}>
+          <div className={styles.dot}></div>
+          <div className={styles.dot}></div>
+          <div className={styles.dot}></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <h3>NOTIFICATIONS</h3>
-      </div>
-      <div className={styles.content}>
-        {loading ? (
-          <div className={styles.loadingState}>
-            <p>Loading notifications...</p>
-          </div>
-        ) : reminders.length === 0 ? (
-          <div className={styles.emptyState}>
-            <p>No notifications to display.</p>
-          </div>
-        ) : (
-          <ul className={styles.reminderList}>
-            {reminders.map((reminder) => {
-              const task = reminder.taskId;
-              const taskTitle = task?.title || "Untitled Task";
-              const taskDesc = task?.description || "No description provided";
-              const dueDate = task?.dueDate || reminder.dueDate;
-              const timeRemaining = getTimeRemaining(dueDate);
+      <h3>NOTIFICATIONS</h3>
 
-              return (
-                <li key={reminder._id} className={styles.reminderItem}>
-                  <div className={styles.reminderDot}></div>
-                  <div className={styles.reminderContent}>
-                    <h4 className={styles.reminderTitle}>{taskTitle}</h4>
-                    <p className={styles.reminderDescription}>{taskDesc}</p>
-                    <div className={styles.dueDate}>
-                      Due: {formatDueDate(dueDate)}
-                      <span className={styles.timeRemaining}>
-                        {timeRemaining}
-                      </span>
+      {newReminders.length === 0 && olderReminders.length === 0 ? (
+        <p>No notifications</p>
+      ) : (
+        <>
+          {/* New notifications section */}
+          {newReminders.length > 0 && (
+            <div className={styles.notificationSection}>
+              <h4 className={styles.sectionHeader}>New</h4>
+              <ul>
+                {newReminders.map((reminder) => (
+                  <li key={reminder._id} className={styles.newNotification}>
+                    <div className={styles.taskTitle}>
+                      {reminder.taskId?.title || "Unknown Task"}
                     </div>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </div>
+                    <div className={styles.timestamp}>
+                      Starts: {formatTime(reminder.taskId?.startTime)}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Older notifications section */}
+          {olderReminders.length > 0 && (
+            <div className={styles.notificationSection}>
+              <h4 className={styles.sectionHeader}>Earlier</h4>
+              <ul>
+                {olderReminders.map((reminder) => (
+                  <li key={reminder._id}>
+                    <div className={styles.taskTitle}>
+                      {reminder.taskId?.title || "Unknown Task"}
+                    </div>
+                    <div className={styles.timestamp}>
+                      Starts: {formatTime(reminder.taskId?.startTime)}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 };

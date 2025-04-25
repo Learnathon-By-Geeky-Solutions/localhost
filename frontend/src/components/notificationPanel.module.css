@@ -1,169 +1,148 @@
 .container {
-  top: 55px;
-  right: 170px;
   position: absolute;
-  width: 350px;
-  max-height: 450px;
-  z-index: 100;
-  border-radius: 12px;
-  background-color: #3a4354;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-  overflow: hidden;
+  top: 50px; /* Right below the topbar */
+  right: 20px;
+  width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+  background-color: lightslategray; /* Pure White from palette */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Shadow from palette */
+  border-radius: 10px;
+  z-index: 1000; /* Ensure it's above other content */
+  padding: 16px;
+  color: #4a4e69; /* Soft Charcoal from palette */
+  font-size: 14px;
   display: flex;
   flex-direction: column;
+  animation: slideIn 0.2s ease-out;
+  transform-origin: top right;
+  border: 1px solid #f7f7f7; /* Very Light Gray from palette */
 }
 
-.header {
-  padding: 16px;
-  background-color: #2d3748;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
-.header h3 {
-  margin: 0;
-  color: white;
+.container h3 {
+  margin: 0 0 16px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f4f4f9; /* Soft Light Gray from palette */
   font-size: 16px;
   font-weight: 600;
-  letter-spacing: 1px;
+  color: #ffffff;
+  text-align: center;
 }
 
-.content {
-  flex: 1;
-  overflow-y: auto;
+.container p {
+  text-align: center;
+  color: #a3a8b5; /* Light Gray Text from palette */
+  margin: 16px 0;
+}
+
+.container ul {
+  list-style: none;
   padding: 0;
-  max-height: 380px;
-  /* Custom scrollbar styles */
-  scrollbar-width: auto;
-  scrollbar-color: #718096 #2d3748;
-}
-
-/* Webkit scrollbar styles */
-.content::-webkit-scrollbar {
-  width: 8px;
-}
-
-.content::-webkit-scrollbar-track {
-  background: #2d3748;
-  border-radius: 0 0 12px 0;
-}
-
-.content::-webkit-scrollbar-thumb {
-  background-color: #718096;
-  border-radius: 4px;
-  border: 2px solid #2d3748;
-}
-
-.reminderList {
-  list-style-type: none;
   margin: 0;
-  padding: 0;
 }
 
-.reminderItem {
-  position: relative;
-  padding: 16px 16px 16px 36px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+.container li {
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  background-color: #f9f6f6; /* Very Light Gray from palette */
+  border-left: 3px solid #6c5b7b; /* Soft Purple from palette */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Shadow from palette */
+  transition: background-color 0.2s;
+}
+
+.container li:hover {
+  background-color: #f7c0c1; /* Soft Light Gray from palette */
+  border-left: 3px solid #fd9ea1; /* Soft Peach from palette */
+  transform: translateX(2px);
+}
+
+.taskTitle {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #4a4e69; /* Soft Charcoal from palette */
+}
+
+.timestamp {
+  font-size: 12px;
+  color: #717274; /* Light Gray Text from palette */
+}
+
+/* Loading animation */
+.loadingDots {
   display: flex;
-  align-items: flex-start;
-  transition: all 0.2s ease;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
 }
 
-.reminderItem:hover {
-  background-color: #4a5568;
-  cursor: pointer;
-}
-
-.urgent {
-  background-color: rgba(237, 100, 100, 0.1);
-}
-
-.urgent:hover {
-  background-color: rgba(237, 100, 100, 0.18);
-}
-
-.reminderDot {
-  position: absolute;
-  left: 16px;
-  top: 22px;
+.dot {
   width: 8px;
   height: 8px;
-  background-color: #90cdf4;
+  background-color: #6c5b7b; /* Soft Purple from palette */
   border-radius: 50%;
+  margin: 0 4px;
+  animation: bounce 1.4s infinite ease-in-out both;
 }
 
-.urgentDot {
-  background-color: #fc8181;
-  animation: pulse 2s infinite;
+.dot:nth-child(1) {
+  animation-delay: -0.32s;
 }
 
-@keyframes pulse {
-  0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(252, 129, 129, 0.7);
-  }
+.dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
 
-  70% {
-    transform: scale(1);
-    box-shadow: 0 0 0 5px rgba(252, 129, 129, 0);
-  }
-
+@keyframes bounce {
+  0%,
+  80%,
   100% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(252, 129, 129, 0);
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
   }
 }
 
-.reminderContent {
-  flex: 1;
+/* New section styles */
+.notificationSection {
+  margin-bottom: 16px;
 }
 
-.reminderTitle {
-  margin: 0 0 4px 0;
-  color: white;
-  font-size: 15px;
+.sectionHeader {
+  font-size: 14px;
   font-weight: 600;
+  color: #ffffff;
+  margin: 8px 0;
+  padding-bottom: 4px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.3);
 }
 
-.reminderDescription {
-  margin: 0 0 8px 0;
-  color: #a0aec0;
-  font-size: 13px;
-  line-height: 1.4;
+.newNotification {
+  border-left: 3px solid #ffb6b9 !important; /* Soft Peach from palette */
+  background-color: rgba(
+    255,
+    182,
+    185,
+    0.1
+  ); /* Slightly highlighted background */
 }
 
-.dueDate {
-  font-size: 12px;
-  color: #edf2f7;
-  background-color: rgba(0, 0, 0, 0.3);
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 4px;
-  margin-top: 4px;
-  font-weight: 500;
-}
-
-.urgentDue {
-  background-color: rgba(229, 62, 62, 0.6);
-}
-
-.timeRemaining {
-  display: block;
-  margin-top: 4px;
-  font-size: 11px;
-  opacity: 0.9;
-}
-
-.loadingState,
-.emptyState {
-  padding: 24px;
-  text-align: center;
-  color: #cbd5e0;
-}
-
-.reminderItem:hover .reminderDescription {
-  color: #a0aec0 !important; /* original color */
-}
-
-.reminderItem * {
-  text-decoration: none !important;
+@media (max-width: 768px) {
+  .container {
+    width: calc(100% - 40px);
+    right: 10px;
+    max-height: 350px;
+  }
 }
