@@ -4,7 +4,7 @@ import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
-import {Loader } from "lucide-react";
+import { Loader } from "lucide-react";
 import styles from "./taskCalendar.module.css";
 
 import TaskDetailModal from "./TaskDetailModal.jsx";
@@ -13,9 +13,6 @@ import { useTaskStore } from "../../store/useTaskStore.js";
 const localizer = momentLocalizer(moment);
 const DnDCalendar = withDragAndDrop(Calendar);
 
-
-
-
 const TaskCalendar = () => {
   const { tasks, isFetchingTasks, fetchTasks } = useTaskStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,14 +20,11 @@ const TaskCalendar = () => {
   const [selectedTime, setSelectedTime] = useState(null);
   const calendarRef = useRef(null);
 
+
   useEffect(() => {
-
     fetchTasks();
-    console.log(tasks);
+    console.log("Fetched tasks:", tasks);
   }, []);
-
-  
-
 
   useEffect(() => {
     const cleanupDragMarks = () => {
@@ -52,40 +46,39 @@ const TaskCalendar = () => {
     return cleanupDragMarks;
   }, [tasks]);
 
-
-  
-  const handleSelectSlot = ({ start, end, box }) => {
-
-    setSelectedTime({startTime:start, endTime:end});
+  const handleSelectSlot = ({ start, end }) => {
+    setSelectedTime({ startTime: start, endTime: end });
     setIsModalOpen(true);
-    
   };
-  
-  const handleSelectEvent = (event, e) => {
-    
+
+  const handleSelectEvent = (event) => {
     setSelectedTask(event);
     setSelectedTime(null);
     setIsModalOpen(true);
-
   };
-  
+
   const moveTask = async ({ event, start, end }) => {
     if (start >= end) {
       end = new Date(start.getTime() + 60 * 60 * 1000); // Add 1 hour if invalid
     }
-    
-    await updateTask({ ...event, startTime: start, endTime: end })
-    
+
+    await updateTask({ ...event, startTime: start, endTime: end });
+    await fetchTasks();
   };
-  
+
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedTask(null);
     setSelectedTime(null);
   };
-  
 
-
+  // ✅ Convert task startTime and endTime into Date objects
+  const calendarEvent = tasks.map((task) => ({
+    ...task,
+    start: new Date(task.startTime),
+    end: new Date(task.endTime),
+  }));
+   
 
   if (isFetchingTasks) {
     return (
@@ -98,11 +91,10 @@ const TaskCalendar = () => {
 
   return (
     <div className={styles.container}>
-
       <div ref={calendarRef} className={styles.calendar}>
         <DnDCalendar
           localizer={localizer}
-          events={tasks}
+          events={calendarEvent}
           startAccessor="start"
           endAccessor="end"
           selectable
@@ -132,13 +124,13 @@ const TaskCalendar = () => {
           })}
         />
       </div>
-      {isModalOpen &&
+      {isModalOpen && (
         <TaskDetailModal
           givenTask={selectedTask}
           givenTime={selectedTime}
           onClose={closeModal}
         />
-      }
+      )}
     </div>
   );
 };
