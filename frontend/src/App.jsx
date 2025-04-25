@@ -19,6 +19,7 @@ import Studyzone from "./pages/Studyzone";
 import Entry from "./pages/Entry";
 import Chapters from "./pages/Chapters";
 import RouteTracker from "./components/RouteTracker";
+import Test from "./pages/Test";
 
 const App = () => {
   const { isCheckingAuth, user, checkAuth } = useAuthStore();
@@ -161,6 +162,7 @@ const App = () => {
             )
           }
         />
+        <Route path="/test" element={<Test/>}/>
       </Routes>
     </Router>
   );

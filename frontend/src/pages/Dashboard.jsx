@@ -4,15 +4,13 @@ import styles from "./dashboard.module.css";
 import PieChart from "../components/PieChart.jsx";
 import BarGraph from "../components/BarGraph.jsx";
 import { useAuthStore } from "../store/useAuthStore.js";
-import TaskList from "../components/TaskList.jsx";
+import TaskList from "../components/TASKS/TaskList.jsx";
 const Dashboard = () => {
   const { user } = useAuthStore();
   const [showWelcome, setShowWelcome] = useState(false);
 
   useEffect(() => {
-    const hasSeenWelcome = localStorage.getItem(`hasSeenWelcome`);
-    console.log(hasSeenWelcome);
-    
+    const hasSeenWelcome = localStorage.getItem(`hasSeenWelcome`);    
     if (hasSeenWelcome==='false') {
 
       setShowWelcome(true);

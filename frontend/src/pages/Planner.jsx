@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./planner.module.css";
-import TaskCalendar from "../components/TaskCalendar";
+import TaskCalendar from "../components/TASKS/TaskCalendar";
 
 const Planner = () => {
   return (
