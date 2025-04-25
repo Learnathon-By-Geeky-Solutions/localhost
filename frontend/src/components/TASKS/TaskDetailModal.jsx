@@ -148,7 +148,7 @@ const TaskDetailModal = ({ givenTask = null, givenTime = null, popupPosition = n
             }}
           >
             <option value="Incomplete">Incomplete</option>
-            <option value="In-Progress">Pending</option>
+            <option value="In-Progress">In-Progress</option>
             <option value="Completed">Completed</option>
           </select>
 

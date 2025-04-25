@@ -15,7 +15,7 @@ export const useTaskStore = create((set) => ({
     try {
       const response = await axiosInstance.get("/tasks");
       set({ tasks: response.data });
-      
+
     } catch (error) {
       console.error("Error fetching tasks:", error);
       set({ taskError: "Failed to fetch tasks: " + error.message });
@@ -24,7 +24,7 @@ export const useTaskStore = create((set) => ({
     }
   },
 
-  
+
   createTask: async (taskData) => {
     set({ isCreatingTask: true, taskError: null });
     try {
@@ -39,34 +39,51 @@ export const useTaskStore = create((set) => ({
       set({ isCreatingTask: false });
     }
   },
-  
-  updateTask: async (id, updatedData) => {
+
+  updateTask: async (id, newData) => {
     set({ isUpdatingTask: true, taskError: null });
     try {
-      const response = await axiosInstance.put(`/tasks/${id}`, updatedData);
+      const response = await axiosInstance.put(`/tasks/${id}`, newData);
+      // set((state) => ({
+      //   tasks: state.tasks.map((task) =>
+      //     task._id === id ? response.data : task
+      //   ),
+      // }));
+    } catch (error) {
+      console.error("Error updating task:", error);
+      set({ taskError: "Failed to update task: " + error.message });
+    } finally {
+      set({ isUpdatingTask: false });
+    }
+  },
+
+  changeStatus: async (id, newStatus) => {
+    set({ isUpdatingTask: true, taskError: null });
+    try {
+      const response = await axiosInstance.patch(`/tasks/${id}`, newStatus);
       set((state) => ({
         tasks: state.tasks.map((task) =>
           task._id === id ? response.data : task
-      ),
-    }));
-  } catch (error) {
-    console.error("Error updating task:", error);
-    set({ taskError: "Failed to update task: " + error.message });
-  } finally {
-    set({ isUpdatingTask: false });
-  }
-},
+        ),
+      }));
+    } catch (error) {
+      console.error("Error updating task:", error);
+      set({ taskError: "Failed to update task: " + error.message });
+    } finally {
+      set({ isUpdatingTask: false });
+    }
+  },
 
-deleteTask: async (id) => {
-  set({ isDeletingTask: true, taskError: null });
-  try {
-    await axiosInstance.delete(`/tasks/${id}`);
-    set((state) => ({
-      tasks: state.tasks.filter((task) => task._id !== id),
-    }));
-  } catch (error) {
-    console.error("Error deleting task:", error);
-    set({ taskError: "Failed to delete task: " + error.message });
+  deleteTask: async (id) => {
+    set({ isDeletingTask: true, taskError: null });
+    try {
+      await axiosInstance.delete(`/tasks/${id}`);
+      set((state) => ({
+        tasks: state.tasks.filter((task) => task._id !== id),
+      }));
+    } catch (error) {
+      console.error("Error deleting task:", error);
+      set({ taskError: "Failed to delete task: " + error.message });
     } finally {
       set({ isDeletingTask: false });
     }
@@ -85,7 +102,7 @@ deleteTask: async (id) => {
   //     set({ isFetchingTasks: false });
   //   }
   // },
-  
+
   // fetchTasksByChapter: async (chapterId) => {
   //   set({ isFetchingTasks: true, taskError: null });
   //   try {

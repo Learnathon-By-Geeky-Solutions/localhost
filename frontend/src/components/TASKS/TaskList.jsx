@@ -6,10 +6,9 @@ import styles from "./taskList.module.css";
 
 
 const TaskList = () => {
-  // const [tasks, setTasks] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
-  const { tasks, isFetchingTasks, fetchTasks } = useTaskStore();
+  const { tasks, isFetchingTasks, fetchTasks, changeStatus } = useTaskStore();
 
 
   useEffect(() => {
@@ -30,6 +29,12 @@ const TaskList = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedTask(null);
+  };
+
+  const handleStatusToggle = async (task) => {
+    const newStatus = (task.status!=='Completed')?
+      "Completed": "Incomplete";
+    await changeStatus(task._id,{status:newStatus});
   };
 
   return (
@@ -58,7 +63,7 @@ const TaskList = () => {
                 <input
                   type="checkbox"
                   checked={task.status === "Completed"}
-                  onChange={(e) => handleStatusToggle(task._id, e)}
+                  onChange={(e) => handleStatusToggle(task, e)}
                   onClick={(e) => e.stopPropagation()}
                 />
 
@@ -80,11 +85,11 @@ const TaskList = () => {
 
                   <p className={styles.taskDescription}>{task.description}</p>
 
-                  {task.start && task.end && (
+                  {task.startTime && task.endTime && (
                     <div className={styles.taskDates}>
-                      <span>{moment(task.start).format("MMM D, h:mm A")}</span>
+                      <span>{moment(task.startTime).format("MMM D, h:mm A")}</span>
                       <span> - </span>
-                      <span>{moment(task.end).format("MMM D, h:mm A")}</span>
+                      <span>{moment(task.endTime).format("MMM D, h:mm A")}</span>
                     </div>
                   )}
 
