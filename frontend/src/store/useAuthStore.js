@@ -20,7 +20,6 @@ export const useAuthStore = create((set) => ({
 
       if (response.data) {
         set({ user: response.data });
-        console.log("Authenticated:", response.data);
       } else {
         set({ user: null });
       }

@@ -23,36 +23,36 @@ export const useTaskStore = create((set) => ({
     }
   },
 
-  fetchTasksByCourse: async (courseId) => {
-    set({ isFetchingTasks: true, taskError: null });
-    try {
-      const response = await axiosInstance.get(`/task/course/${courseId}`);
-      set({ tasks: response.data });
-    } catch (error) {
-      console.error("Error fetching course tasks:", error);
-      set({ taskError: "Failed to fetch course tasks: " + error.message });
-    } finally {
-      set({ isFetchingTasks: false });
-    }
-  },
+  // fetchTasksByCourse: async (courseId) => {
+  //   set({ isFetchingTasks: true, taskError: null });
+  //   try {
+  //     const response = await axiosInstance.get(`/task/course/${courseId}`);
+  //     set({ tasks: response.data });
+  //   } catch (error) {
+  //     console.error("Error fetching course tasks:", error);
+  //     set({ taskError: "Failed to fetch course tasks: " + error.message });
+  //   } finally {
+  //     set({ isFetchingTasks: false });
+  //   }
+  // },
 
-  fetchTasksByChapter: async (chapterId) => {
-    set({ isFetchingTasks: true, taskError: null });
-    try {
-      const response = await axiosInstance.get(`/task/chapter/${chapterId}`);
-      set({ tasks: response.data });
-    } catch (error) {
-      console.error("Error fetching chapter tasks:", error);
-      set({ taskError: "Failed to fetch chapter tasks: " + error.message });
-    } finally {
-      set({ isFetchingTasks: false });
-    }
-  },
+  // fetchTasksByChapter: async (chapterId) => {
+  //   set({ isFetchingTasks: true, taskError: null });
+  //   try {
+  //     const response = await axiosInstance.get(`/tasks/chapter/${chapterId}`);
+  //     set({ tasks: response.data });
+  //   } catch (error) {
+  //     console.error("Error fetching chapter tasks:", error);
+  //     set({ taskError: "Failed to fetch chapter tasks: " + error.message });
+  //   } finally {
+  //     set({ isFetchingTasks: false });
+  //   }
+  // },
 
   createTask: async (taskData) => {
     set({ isCreatingTask: true, taskError: null });
     try {
-      const response = await axiosInstance.post("/task", taskData);
+      const response = await axiosInstance.post("/tasks", taskData);
       set((state) => ({
         tasks: [...state.tasks, response.data],
       }));
@@ -67,7 +67,7 @@ export const useTaskStore = create((set) => ({
   updateTask: async (id, updatedData) => {
     set({ isUpdatingTask: true, taskError: null });
     try {
-      const response = await axiosInstance.put(`/task/${id}`, updatedData);
+      const response = await axiosInstance.put(`/tasks/${id}`, updatedData);
       set((state) => ({
         tasks: state.tasks.map((task) =>
           task._id === id ? response.data : task
@@ -84,7 +84,7 @@ export const useTaskStore = create((set) => ({
   deleteTask: async (id) => {
     set({ isDeletingTask: true, taskError: null });
     try {
-      await axiosInstance.delete(`/task/${id}`);
+      await axiosInstance.delete(`/tasks/${id}`);
       set((state) => ({
         tasks: state.tasks.filter((task) => task._id !== id),
       }));

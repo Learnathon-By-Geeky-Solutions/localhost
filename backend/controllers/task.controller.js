@@ -40,14 +40,14 @@ export const createTask = async (req, res) => {
     const {
       title,
       description,
-      startTime,
-      endTime,
       priority,
       status,
+      startTime,
+      endTime,
       courseId,
       chapterId,
     } = req.body;
-
+    
     // Check authentication
     if (!req.user) {
       return res.status(401).json({ message: "Unauthorized - No user found" });

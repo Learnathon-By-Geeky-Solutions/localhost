@@ -39,14 +39,14 @@ const TaskDetailModal = ({ givenTask = null, givenTime = null, popupPosition = n
       setWarning("Title is required!");
       return;
     }
+    createTask(task); // creating new task
 
-    if (givenTask) {
-      // updateTask(task); // editing existing task
-    } else {
-      createTask({ ...task, _id: crypto.randomUUID() }); // creating new task
-    }
+    // if (givenTask) {
+    //   // updateTask(task); // editing existing task
+    // } else {
+    // }
 
-    onClose();
+    // onClose();
   };
 
   const handleDelete = () => {
@@ -149,7 +149,7 @@ const TaskDetailModal = ({ givenTask = null, givenTime = null, popupPosition = n
             }}
           >
             <option value="Incomplete">Incomplete</option>
-            <option value="Pending">Pending</option>
+            <option value="In-Progress">Pending</option>
             <option value="Completed">Completed</option>
           </select>
 
