@@ -4,8 +4,9 @@ import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
-import { Check, Save, Trash, X, Loader } from "lucide-react";
+import {Loader } from "lucide-react";
 import styles from "./taskCalendar.module.css";
+
 import TaskDetailModal from "./TaskDetailModal.jsx";
 import { useTaskStore } from "../../store/useTaskStore.js";
 
@@ -19,13 +20,17 @@ const TaskCalendar = () => {
   const { tasks, isFetchingTasks, fetchTasks } = useTaskStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [selectedTime, setSelectedTime] = useState(null);
   const calendarRef = useRef(null);
-  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
 
     fetchTasks();
+    console.log(tasks);
   }, []);
+
+  
+
 
   useEffect(() => {
     const cleanupDragMarks = () => {
@@ -48,58 +53,37 @@ const TaskCalendar = () => {
   }, [tasks]);
 
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedTask(null);
-  };
+  
+  const handleSelectSlot = ({ start, end, box }) => {
 
+    setSelectedTime({startTime:start, endTime:end});
+    setIsModalOpen(true);
+    
+  };
+  
+  const handleSelectEvent = (event, e) => {
+    
+    setSelectedTask(event);
+    setSelectedTime(null);
+    setIsModalOpen(true);
+
+  };
+  
   const moveTask = async ({ event, start, end }) => {
     if (start >= end) {
       end = new Date(start.getTime() + 60 * 60 * 1000); // Add 1 hour if invalid
     }
-
-    await updateTask(event._id, { ...event, startTime: start, endTime: end })
-
-    fetchTasks();
+    
+    await updateTask({ ...event, startTime: start, endTime: end })
+    
   };
-
-
-  const calculateSafePosition = (x, y) => {
-    if (!calendarRef.current) return { x: 0, y: 0 };
-
-    const calendarRect = calendarRef.current.getBoundingClientRect();
-    const W = calendarRect.width;
-    const H = calendarRect.height;
-
-    let safeX = 10;
-    if (x < W / 2) {
-      safeX = x + 10;
-    }
-    else {
-      safeX = x - W / 2;
-    }
-    let safeY = H / 4;
-
-    return { x: safeX, y: safeY };
+  
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedTask(null);
+    setSelectedTime(null);
   };
-
-  const handleSelectSlot = ({ start, end, box }) => {
-    const x = box ? box.x : 0;
-    const y = box ? box.y : 0;
-
-    const safePosition = calculateSafePosition(x, y);
-    setPopupPosition(safePosition);
-
-
-  };
-
-  const handleSelectEvent = (event, e) => {
-    if (e && e.pageX && e.pageY) {
-      const safePosition = calculateSafePosition(e.pageX, e.pageY);
-      setPopupPosition(safePosition);
-    }
-    setSelectedTask(event);
-  };
+  
 
 
 
@@ -151,7 +135,7 @@ const TaskCalendar = () => {
       {isModalOpen &&
         <TaskDetailModal
           givenTask={selectedTask}
-          popupPosition={popupPosition}
+          givenTime={selectedTime}
           onClose={closeModal}
         />
       }

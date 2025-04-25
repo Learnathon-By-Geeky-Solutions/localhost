@@ -18,7 +18,7 @@ const newTask = {
   chapterId: null,
 };
 
-const TaskDetailModal = ({ givenTask = null, givenTime = null, popupPosition = null, onClose = () => { } }) => {
+const TaskDetailModal = ({ givenTask = null, givenTime = null, onClose = () => { } }) => {
   const [task, setTask] = useState(givenTask ? givenTask : newTask);
   const [warning, setWarning] = useState("");
 
@@ -28,8 +28,8 @@ const TaskDetailModal = ({ givenTask = null, givenTime = null, popupPosition = n
     if (!givenTask && givenTime) {
       setTask(prev => ({
         ...prev,
-        startTime: givenTime.start,
-        endTime: givenTime.end,
+        startTime: givenTime.startTime,
+        endTime: givenTime.endTime,
       }));
     }
   }, [givenTask, givenTime]);
@@ -59,11 +59,7 @@ const TaskDetailModal = ({ givenTask = null, givenTime = null, popupPosition = n
     <div className={styles.modalOverlay}>
       <div
         className={styles.container}
-        style={popupPosition && {
-          position: 'absolute',
-          left: `${popupPosition.x}px`,
-          top: `${popupPosition.y}px`,
-        }}
+        
       >
         <div className={styles.header}>
           <input

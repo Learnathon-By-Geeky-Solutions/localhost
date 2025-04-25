@@ -22,6 +22,7 @@ export const useTaskStore = create((set) => ({
     } finally {
       set({ isFetchingTasks: false });
     }
+    
   },
 
 
@@ -40,15 +41,17 @@ export const useTaskStore = create((set) => ({
     }
   },
 
-  updateTask: async (id, newData) => {
+  updateTask: async (newData) => {
+    console.log(newData);
+    
     set({ isUpdatingTask: true, taskError: null });
     try {
-      const response = await axiosInstance.put(`/tasks/${id}`, newData);
-      // set((state) => ({
-      //   tasks: state.tasks.map((task) =>
-      //     task._id === id ? response.data : task
-      //   ),
-      // }));
+      const response = await axiosInstance.put(`/tasks/${newData._id}`, newData);
+      set((state) => ({
+        tasks: state.tasks.map((task) =>
+          task._id === newData._id ? response.data : task
+        ),
+      }));
     } catch (error) {
       console.error("Error updating task:", error);
       set({ taskError: "Failed to update task: " + error.message });
