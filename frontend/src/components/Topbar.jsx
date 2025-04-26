@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import styles from "./topbar.module.css";
 import { useAuthStore } from "../store/useAuthStore";
 import { useNavigate } from "react-router-dom";
@@ -11,58 +11,43 @@ export const Topbar = () => {
   const [showNotification, setShowNotification] = useState(false);
   const [notificationCount, setNotificationCount] = useState(0);
   const [viewedNotificationIds, setViewedNotificationIds] = useState(() => {
-    // Load viewed notification IDs from localStorage
     const saved = localStorage.getItem("viewedNotificationIds");
     return saved ? new Set(JSON.parse(saved)) : new Set();
   });
-  const panelRef = useRef(null); // <-- for detecting outside clicks
-
-  // Flag to track if we already handled notifications in this session
+  const panelRef = useRef(null);
   const processedIdsRef = useRef(new Set());
 
   const handleNotificationBtn = () => {
     setShowNotification((prev) => !prev);
   };
 
-  // This function is now only called when the panel closes
   const handlePanelClose = (notificationIds) => {
     if (!notificationIds || notificationIds.length === 0) return;
 
-    // Filter out IDs we've already processed
     const newIds = notificationIds.filter(
       (id) => !processedIdsRef.current.has(id)
     );
     if (newIds.length === 0) return;
 
-    // Mark these IDs as processed for this session
     newIds.forEach((id) => processedIdsRef.current.add(id));
-
-    // Add to viewedIds
     const updatedViewedIds = new Set([...viewedNotificationIds, ...newIds]);
     setViewedNotificationIds(updatedViewedIds);
 
-    // Store in localStorage
     localStorage.setItem(
       "viewedNotificationIds",
       JSON.stringify([...updatedViewedIds])
     );
 
-    // Reset notification count
     fetchUnreadNotifications();
   };
 
-  const fetchUnreadNotifications = async () => {
+  const fetchUnreadNotifications = useCallback(async () => {
     try {
       const response = await axiosInstance.get("/reminders");
 
       const now = new Date();
       const dueReminders = response.data.filter((reminder) => {
         const notificationTime = new Date(reminder.notificationTime);
-
-        // Only include notifications that are:
-        // 1. Due (notification time is in the past)
-        // 2. Not marked as sent
-        // 3. Not in our viewedNotificationIds set
         return (
           notificationTime <= now &&
           !reminder.notificationSent &&
@@ -70,26 +55,20 @@ export const Topbar = () => {
         );
       });
 
-      // Update the notification count
       setNotificationCount(dueReminders.length);
       return dueReminders;
     } catch (error) {
       console.error("Failed to fetch notifications count:", error);
       return [];
     }
-  };
-
-  // Run when viewedNotificationIds changes or component mounts
-  useEffect(() => {
-    fetchUnreadNotifications();
-
-    // Fetch notifications regularly
-    const countInterval = setInterval(fetchUnreadNotifications, 5000);
-
-    return () => clearInterval(countInterval);
   }, [viewedNotificationIds]);
 
-  // Handle closing the panel when clicking outside
+  useEffect(() => {
+    fetchUnreadNotifications();
+    const countInterval = setInterval(fetchUnreadNotifications, 5000);
+    return () => clearInterval(countInterval);
+  }, [fetchUnreadNotifications]);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (panelRef.current && !panelRef.current.contains(event.target)) {
@@ -103,11 +82,8 @@ export const Topbar = () => {
     };
   }, []);
 
-  // Reset the processed IDs when the component mounts
   useEffect(() => {
     processedIdsRef.current = new Set();
-
-    // Reset again when component unmounts
     return () => {
       processedIdsRef.current = new Set();
     };
@@ -115,13 +91,19 @@ export const Topbar = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.logo} onClick={() => navigate("/dashboard")}>
+      {/* STUDIFY logo */}
+      <button className={styles.logo} onClick={() => navigate("/dashboard")}>
         STUDIFY
-      </div>
+      </button>
+
       <div className={styles.rightSide}>
-        {/* Wrap notification in a container */}
+        {/* Notifications */}
         <div className={styles.notificationContainer}>
-          <div className={styles.notification} onClick={handleNotificationBtn}>
+          <button
+            className={styles.notification}
+            onClick={handleNotificationBtn}
+            aria-label="Notifications"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -139,8 +121,9 @@ export const Topbar = () => {
                 {notificationCount > 99 ? "99+" : notificationCount}
               </span>
             )}
-          </div>
-          {/* Panel rendering logic */}
+          </button>
+
+          {/* Notification Panel */}
           {showNotification && (
             <div ref={panelRef}>
               <NotificationPanel
@@ -151,6 +134,8 @@ export const Topbar = () => {
             </div>
           )}
         </div>
+
+        {/* Profile Icon */}
         <div className={styles.profile}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -165,6 +150,8 @@ export const Topbar = () => {
             />
           </svg>
         </div>
+
+        {/* Username */}
         <div className={styles.name}>{user.fullName.toUpperCase()}</div>
       </div>
     </div>
