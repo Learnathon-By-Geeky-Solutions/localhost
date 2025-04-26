@@ -143,8 +143,6 @@ const NotificationPanel = ({ viewedIds, onPanelClose }) => {
 
 // ✅ Properly added PropTypes validation
 NotificationPanel.propTypes = {
-  onNotificationsViewed: PropTypes.func.isRequired,
-  fetchNewNotifications: PropTypes.func.isRequired,
   viewedIds: PropTypes.instanceOf(Set).isRequired, // viewedIds is a Set
   onPanelClose: PropTypes.func.isRequired,
 };
