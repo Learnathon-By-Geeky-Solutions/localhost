@@ -18,13 +18,24 @@ const TaskCalendar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
+  const [calenderEvent, setCalendarEvent] = useState([]);
   const calendarRef = useRef(null);
-
 
   useEffect(() => {
     fetchTasks();
-    console.log("Fetched tasks:", tasks);
   }, []);
+  
+  // Update local events when tasks change
+  useEffect(() => {
+    if (tasks && tasks.length > 0) {
+      const formattedEvents = tasks.map((task) => ({
+        ...task,
+        start: new Date(task.startTime),
+        end: new Date(task.endTime),
+      }));
+      setCalendarEvent(formattedEvents);
+    }
+  }, [tasks]);
 
   useEffect(() => {
     const cleanupDragMarks = () => {
@@ -44,7 +55,7 @@ const TaskCalendar = () => {
 
     cleanupDragMarks();
     return cleanupDragMarks;
-  }, [tasks]);
+  }, [calenderEvent]);
 
   const handleSelectSlot = ({ start, end }) => {
     setSelectedTime({ startTime: start, endTime: end });
@@ -58,13 +69,27 @@ const TaskCalendar = () => {
   };
 
   const moveTask = async ({ event, start, end }) => {
-    
     if (start >= end) {
       end = new Date(start.getTime() + 60 * 60 * 1000); // Add 1 hour if invalid
     }
-
-    await updateTask({ ...event, startTime: start, endTime: end });
-    await fetchTasks();
+    
+    // Update local state first for immediate UI response
+    const updatedEvents = calenderEvent.map(evt => 
+      evt.id === event.id 
+        ? { ...evt, start, end, startTime: start, endTime: end } 
+        : evt
+    );
+    setCalendarEvent(updatedEvents);
+    
+    // Then update in the background without refreshing
+    try {
+      await updateTask({ ...event, startTime: start, endTime: end });
+      // No need to call fetchTasks() here since we've already updated local state
+    } catch (error) {
+      console.error("Failed to update task:", error);
+      // Revert to original data if update fails
+      fetchTasks();
+    }
   };
 
   const closeModal = () => {
@@ -72,14 +97,6 @@ const TaskCalendar = () => {
     setSelectedTask(null);
     setSelectedTime(null);
   };
-
-  // ✅ Convert task startTime and endTime into Date objects
-  const calendarEvent = tasks.map((task) => ({
-    ...task,
-    start: new Date(task.startTime),
-    end: new Date(task.endTime),
-  }));
-   
 
   if (isFetchingTasks) {
     return (
@@ -95,12 +112,12 @@ const TaskCalendar = () => {
       <div ref={calendarRef} className={styles.calendar}>
         <DnDCalendar
           localizer={localizer}
-          events={calendarEvent}
+          events={calenderEvent}
           startAccessor="start"
           endAccessor="end"
           selectable
           resizable
-          defaultView={Views.WEEK}
+          defaultView={Views.MONTH}
           views={["month", "week", "day"]}
           onSelectSlot={handleSelectSlot}
           onSelectEvent={handleSelectEvent}
