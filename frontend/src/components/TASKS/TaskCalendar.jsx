@@ -14,7 +14,7 @@ const localizer = momentLocalizer(moment);
 const DnDCalendar = withDragAndDrop(Calendar);
 
 const TaskCalendar = () => {
-  const { tasks, isFetchingTasks, fetchTasks } = useTaskStore();
+  const { tasks, isFetchingTasks, fetchTasks, updateTask } = useTaskStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
@@ -58,6 +58,7 @@ const TaskCalendar = () => {
   };
 
   const moveTask = async ({ event, start, end }) => {
+    
     if (start >= end) {
       end = new Date(start.getTime() + 60 * 60 * 1000); // Add 1 hour if invalid
     }
