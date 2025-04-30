@@ -1,23 +1,15 @@
 import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types"; // <-- Import PropTypes
 import styles from "./notificationPanel.module.css";
 import { axiosInstance } from "../lib/axios";
 
-const NotificationPanel = ({
-  onNotificationsViewed,
-  fetchNewNotifications,
-  viewedIds,
-  onPanelClose,
-}) => {
+const NotificationPanel = ({ viewedIds, onPanelClose }) => {
   const [newReminders, setNewReminders] = useState([]);
   const [olderReminders, setOlderReminders] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // Track IDs of notifications that were new when panel was opened
   const [initialNewNotificationIds, setInitialNewNotificationIds] = useState(
     []
   );
-
-  // Flag to track first load
   const [isFirstLoad, setIsFirstLoad] = useState(true);
 
   useEffect(() => {
@@ -31,33 +23,28 @@ const NotificationPanel = ({
           return notificationTime <= now && !reminder.notificationSent;
         });
 
-        // Split reminders into new and older based on viewedIds
         const newRemindersArray = dueReminders.filter(
           (reminder) => !viewedIds.has(reminder._id)
         );
-
         const olderRemindersArray = dueReminders.filter((reminder) =>
           viewedIds.has(reminder._id)
         );
 
-        // Sort both arrays by notification time - NEW at TOP (newest first)
         const sortedNewReminders = newRemindersArray.sort((a, b) => {
           const dateA = new Date(a.notificationTime);
           const dateB = new Date(b.notificationTime);
-          return dateB - dateA; // Newest first for new notifications
+          return dateB - dateA;
         });
 
-        // Sort older reminders with oldest at bottom
         const sortedOlderReminders = olderRemindersArray.sort((a, b) => {
           const dateA = new Date(a.notificationTime);
           const dateB = new Date(b.notificationTime);
-          return dateB - dateA; // Newest first for older notifications too
+          return dateB - dateA;
         });
 
         setNewReminders(sortedNewReminders);
         setOlderReminders(sortedOlderReminders);
 
-        // Only capture the initial new notifications once when the component first loads
         if (isFirstLoad && sortedNewReminders.length > 0) {
           const newIds = sortedNewReminders.map((reminder) => reminder._id);
           setInitialNewNotificationIds(newIds);
@@ -71,17 +58,13 @@ const NotificationPanel = ({
     };
 
     fetchReminders();
-
-    // Set up periodic refresh of the panel contents
-    const refreshInterval = setInterval(fetchReminders, 5000); // Check every 5 seconds
+    const refreshInterval = setInterval(fetchReminders, 5000);
 
     return () => clearInterval(refreshInterval);
   }, [viewedIds, isFirstLoad]);
 
-  // Only when the component unmounts (panel closes), pass the notification IDs to parent
   useEffect(() => {
     return () => {
-      // Only run if we have IDs and they haven't been processed yet
       if (initialNewNotificationIds.length > 0) {
         onPanelClose(initialNewNotificationIds);
       }
@@ -114,12 +97,10 @@ const NotificationPanel = ({
   return (
     <div className={styles.container}>
       <h3>NOTIFICATIONS</h3>
-
       {newReminders.length === 0 && olderReminders.length === 0 ? (
         <p>No notifications</p>
       ) : (
         <>
-          {/* New notifications section */}
           {newReminders.length > 0 && (
             <div className={styles.notificationSection}>
               <h4 className={styles.sectionHeader}>New</h4>
@@ -137,8 +118,6 @@ const NotificationPanel = ({
               </ul>
             </div>
           )}
-
-          {/* Older notifications section */}
           {olderReminders.length > 0 && (
             <div className={styles.notificationSection}>
               <h4 className={styles.sectionHeader}>Earlier</h4>
@@ -160,6 +139,12 @@ const NotificationPanel = ({
       )}
     </div>
   );
+};
+
+// ✅ Properly added PropTypes validation
+NotificationPanel.propTypes = {
+  viewedIds: PropTypes.instanceOf(Set).isRequired, // viewedIds is a Set
+  onPanelClose: PropTypes.func.isRequired,
 };
 
 export default NotificationPanel;
